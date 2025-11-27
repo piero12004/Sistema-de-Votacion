@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VotUP | Elecciones UTP 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="bg-gray-50 text-center text-sm py-1 border-b border-gray-200">
+        <span class="text-gray-600">Faltan: </span>
+        <span class="font-bold text-red-600 mx-2">X meses</span>
+        <span class="font-bold text-red-600 mx-2">X días</span>
+        <span class="font-bold text-red-600 mx-2">X horas</span>
+    </div>
+
+    <header class="bg-teal-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between p-4">
+            
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <span class="font-extrabold text-white text-xl leading-none">V</span>
+                </div>
+                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">VotUP</h1>
+            </div>
+
+            <nav class="flex space-x-8 text-white text-lg font-semibold">
+                <a href="#" class="hover:text-gray-300 transition duration-300">Inicio</a>
+                <a href="#" class="hover:text-gray-300 transition duration-300">Candidatos</a>
+                <a href="#" class="hover:text-gray-300 transition duration-300">Contacto</a>
+            </nav>
+
+            <a href="#" id="open-modal-btn" class="bg-white text-teal-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300 shadow-md">
+                Iniciar Sesion
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section class="bg-blue-800 text-white rounded-lg shadow-xl overflow-hidden mb-12">
+            <div class="flex flex-col md:flex-row items-stretch">
+                <div class="p-8 md:p-12 w-full md:w-7/12 bg-blue-700/90 flex flex-col justify-center">
+                    <h2 class="text-4xl sm:text-5xl font-extrabold mb-2 leading-tight">
+                        Elecciones UTP 2026
+                    </h2>
+                    <p class="text-xl sm:text-2xl font-light">
+                        Tu voto cuenta: seleccione a su peruano preferido se realizará, este XX
+                    </p>
+                </div>
+                
+                <div class="w-full md:w-5/12 overflow-hidden">
+                    <div class="h-64 md:h-full bg-cover bg-center" 
+                         style="background-image: url(''); background-size: cover; background-position: center; min-height: 250px;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mt-16">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-10">
+                Conozca a los postulantes
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
+                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-user text-6xl text-gray-500"></i>
+                    </div>
+                    <p class="text-lg font-medium text-gray-800">Candidato 1</p>
+                </div>
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
+                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-user text-6xl text-gray-500"></i>
+                    </div>
+                    <p class="text-lg font-medium text-gray-800">Candidato 2</p>
+                </div>
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
+                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-user text-6xl text-gray-500"></i>
+                    </div>
+                    <p class="text-lg font-medium text-gray-800">Candidato 3</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
+                Inicia Sesión
+            </h2>
+            <button id="close-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
+
+            <form action="verificacion.html" method="GET"> 
+                <div class="mb-4">
+                    <label for="usuario" class="block text-gray-700 text-sm font-bold mb-2">Usuario:</label>
+                    <input type="text" id="usuario" placeholder="Nombre Apellido"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label for="contrasena" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                    <input type="password" id="contrasena" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex items-center justify-between text-sm mb-6">
+                    <label class="flex items-center text-gray-600">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded mr-2">
+                        Recordar Contraseña
+                    </label>
+                    
+                    <a href="#" id="open-recover-link" class="text-blue-600 hover:text-blue-800 transition duration-300">
+                        ¿Has olvidado tu contraseña?
+                    </a>
+                </div>
+
+                <div class="flex flex-col space-y-3">
+                    <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        Iniciar Sesion
+                    </button>
+                    
+                    <button type="button" id="open-register-btn-from-login"
+                            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        Crear Cuenta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="register-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
+                ¿No tienes cuenta? <span class="block font-bold">¡Crea una ahora!</span>
+            </h2>
+            <button id="close-register-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
+            <form>
+                <div class="mb-4">
+                    <label for="full-name" class="block text-gray-700 text-sm font-bold mb-2">Nombre Completo</label>
+                    <input type="text" id="full-name" placeholder="Nombre Apellido"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
+                    <input type="email" id="email" placeholder="correo@gmail.com"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label for="reg-password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                    <input type="password" id="reg-password" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label for="confirm-password" class="block text-gray-700 text-sm font-bold mb-2">Confirmacion de Contraseña</label>
+                    <input type="password" id="confirm-password" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex items-center text-sm mb-6">
+                    <label class="flex items-center text-gray-600">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded mr-2">
+                        Recordar Contraseña
+                    </label>
+                </div>
+                <div class="flex flex-col space-y-3">
+                    <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        Crear Cuenta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="recover-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6 text-center leading-snug">
+                ¿Olvidaste tu contraseña? <span class="block font-bold">Envía un mensaje de recuperacion a tu correo</span>
+            </h2>
+            <button id="close-recover-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
+            <form>
+                <div class="mb-6">
+                    <label for="recover-email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electronico</label>
+                    <input type="email" id="recover-email" placeholder="correo@gmail.com"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+
+                <div class="flex justify-center">
+                    <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-xs">
+                        Recuperar Contraseña
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer class="bg-teal-700 text-white text-center p-4 mt-20">
+        <p class="text-sm">&copy; 2025 Grupo 3: Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        const loginModal = document.getElementById('login-modal');
+        const openLoginBtn = document.getElementById('open-modal-btn');
+        const closeLoginBtn = document.getElementById('close-modal'); 
+        const openRegisterBtn = document.getElementById('open-register-btn-from-login');
+        const openRecoverLink = document.getElementById('open-recover-link');
+
+        const registerModal = document.getElementById('register-modal');
+        const closeRegisterBtn = document.getElementById('close-register-modal'); 
+
+        const recoverModal = document.getElementById('recover-modal');
+        const closeRecoverBtn = document.getElementById('close-recover-modal'); 
+        
+        function toggleModal(modal, show = true) {
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, true); });
+        closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
+        loginModal.addEventListener('click', (e) => { if (e.target === loginModal) { toggleModal(loginModal, false); } });
+
+        openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
+        closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
+        registerModal.addEventListener('click', (e) => { if (e.target === registerModal) { toggleModal(registerModal, false); } });
+
+        openRecoverLink.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, false); toggleModal(recoverModal, true); });
+        closeRecoverBtn.addEventListener('click', () => toggleModal(recoverModal, false));
+        recoverModal.addEventListener('click', (e) => { if (e.target === recoverModal) { toggleModal(recoverModal, false); } });
+    </script>
+
+</body>
+</html>

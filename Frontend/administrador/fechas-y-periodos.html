@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fechas y Periodos - Panel Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'main-bg': '#f3f4f6', 
+                        'sidebar-bg': '#3c676e', 
+                        'main-title': '#2e4963', 
+                        'sidebar-btn-active': '#e5e7eb', 
+                        'custom-dark-button': '#355b63', 
+                        'estado-proceso': '#50a75c', 
+                        'estado-finalizado': '#8d9c9b', 
+                        'estado-pendiente': '#f5da57', 
+                        'edit-icon': '#355b63', 
+                        'delete-icon': '#dc2626', 
+                        'guardar-btn': '#007bff',
+                    },
+                    spacing: {
+                        'sidebar-width': '16rem', 
+                    }
+                }
+            }
+        }
+
+        const periodos = [
+            { etapa: 'Inscripción de candidatos', inicio: '01/03/2025', fin: '10/03/2025', estado: 'En proceso' },
+            { etapa: 'Campaña electoral', inicio: '16/03/2025', fin: '30/03/2025', estado: 'Finalizado' },
+            { etapa: 'Jornada de votación', inicio: '01/04/2025', fin: '01/04/2025', estado: 'Pendiente' },
+            { etapa: 'Cómputo de resultados', inicio: '02/04/2025', fin: '03/04/2025', estado: 'Pendiente' },
+        ];
+
+        function getStatusColor(estado) {
+            switch (estado) {
+                case 'En proceso':
+                    return 'bg-estado-proceso text-white';
+                case 'Finalizado':
+                    return 'bg-estado-finalizado text-white';
+                case 'Pendiente':
+                    return 'bg-estado-pendiente text-custom-dark-button';
+                default:
+                    return 'bg-gray-300 text-gray-800';
+            }
+        }
+
+        function renderPeriodosTable() {
+            const tbody = document.getElementById('periodos-table-body');
+            if (!tbody) return;
+
+            let html = '';
+            periodos.forEach(periodo => {
+                const statusClass = getStatusColor(periodo.estado);
+                
+                html += `
+                    <tr class="border-b hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-3 font-medium text-gray-900">${periodo.etapa}</td>
+                        <td class="px-6 py-3 text-gray-700 font-mono">${periodo.inicio}</td>
+                        <td class="px-6 py-3 text-gray-700 font-mono">${periodo.fin}</td>
+                        <td class="px-6 py-3">
+                            <span class="inline-flex items-center px-3 py-1 text-xs font-bold leading-none rounded-full ${statusClass}">
+                                ${periodo.estado}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3 space-x-3 whitespace-nowrap">
+                            <!-- Botón Eliminar -->
+                            <button onclick="handleAction('${periodo.etapa}', 'eliminar')" title="Eliminar" class="text-delete-icon hover:text-red-700 transition duration-150 focus:outline-none">
+                                <i class="fas fa-times-circle text-xl"></i>
+                            </button>
+                            <!-- Botón Editar -->
+                            <button onclick="handleAction('${periodo.etapa}', 'editar')" title="Editar" class="text-edit-icon hover:text-blue-700 transition duration-150 focus:outline-none">
+                                <i class="fas fa-pencil-alt text-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function handleAction(etapa, action) {
+            const message = action === 'editar' 
+                ? `La función de Editar para la etapa "${etapa}" está pendiente de implementación.`
+                : `La función de Eliminar para la etapa "${etapa}" está pendiente de implementación.`;
+            
+            showCustomMessage(message); 
+        }
+
+        function showCustomMessage(message) {
+            const modal = document.getElementById('custom-message-modal');
+            const content = document.getElementById('custom-message-content');
+            if (modal && content) {
+                content.textContent = message;
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function hideCustomMessage() {
+            document.getElementById('custom-message-modal').classList.add('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderPeriodosTable);
+    </script>
+</head>
+<body class="bg-main-bg font-sans">
+
+    <div class="flex min-h-screen">
+        
+        <!-- Sidebar de Navegación -->
+        <div class="w-sidebar-width bg-sidebar-bg text-white flex flex-col justify-between p-4 fixed h-full shadow-lg">
+            <div>
+                <div class="flex items-center space-x-3 mb-8 border-b border-gray-500 pb-4">
+                    <div class="p-2 rounded-full bg-white text-sidebar-bg">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <span class="text-xl font-semibold">Usuario</span>
+                </div>
+
+                <nav class="space-y-3">
+                    <a href="principal.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+                        <i class="fas fa-home w-5 h-5"></i>
+                        <span>Panel principal</span>
+                    </a>
+                    
+                    <a href="procesos_electorales.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+                        <i class="fas fa-clipboard-list w-5 h-5"></i>
+                        <span>Procesos electorales</span>
+                    </a>
+                    
+                    <a href="candidatos.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+                        <i class="fas fa-users w-5 h-5"></i>
+                        <span>Candidatos</span>
+                    </a>
+                    
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-sidebar-btn-active text-gray-800 font-medium shadow-md">
+                        <i class="fas fa-calendar-alt w-5 h-5 text-custom-dark-button"></i>
+                        <span>Fechas y Periodos</span>
+                    </a>
+                    
+                    <a href="resultados.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+                        <i class="fas fa-chart-bar w-5 h-5"></i>
+                        <span>Resultados</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="mt-8">
+                <a href="index.html" class="w-full py-3 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-150 shadow-md flex justify-center">
+                    Cerrar Sesion
+                </a>
+            </div>
+        </div>
+        
+        <!-- Contenido Principal -->
+        <main class="flex-1 p-8 md:p-12 ml-sidebar-width">
+            
+            <h1 class="text-4xl font-serif text-main-title mb-10 border-b pb-4 text-center md:text-left">
+                Fechas y Periodos
+            </h1>
+            
+            <!-- Tabla de gestion -->
+            <h2 class="text-2xl font-semibold text-custom-dark-button mb-6">
+                Gestión de fechas y periodos electorales
+            </h2>
+            
+            <div class="bg-white rounded-xl shadow-lg overflow-x-auto mb-12">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Etapa
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Inicio
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Fin
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="periodos-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Registrar nuevo periodo -->
+            <h2 class="text-2xl font-semibold text-custom-dark-button mb-6 mt-10">
+                Registrar nuevo periodo electoral
+            </h2>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-custom-dark-button">
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div>
+                        <label for="periodo-nombre" class="block text-sm font-semibold text-gray-700 mb-1">Nombre del periodo</label>
+                        <input type="text" id="periodo-nombre" placeholder="Ej. Inscripción de candidaturas" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-custom-dark-button focus:border-custom-dark-button transition duration-150">
+                    </div>
+
+                    <div>
+                        <label for="periodo-inicio" class="block text-sm font-semibold text-gray-700 mb-1">Fecha de inicio</label>
+                        <input type="date" id="periodo-inicio" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-custom-dark-button focus:border-custom-dark-button transition duration-150">
+                    </div>
+
+                    <div>
+                        <label for="periodo-fin" class="block text-sm font-semibold text-gray-700 mb-1">Fecha de fin</label>
+                        <input type="date" id="periodo-fin" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-custom-dark-button focus:border-custom-dark-button transition duration-150">
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+                        <div class="flex items-center space-x-4 h-full pt-3">
+                            <label class="flex items-center space-x-1 text-gray-700">
+                                <input type="radio" name="periodo-estado" value="pendiente" class="form-radio text-yellow-500 focus:ring-yellow-500" checked>
+                                <span>Pendiente</span>
+                            </label>
+                            <label class="flex items-center space-x-1 text-gray-700">
+                                <input type="radio" name="periodo-estado" value="activo" class="form-radio text-green-600 focus:ring-green-600">
+                                <span>Activo</span>
+                            </label>
+                            <label class="flex items-center space-x-1 text-gray-700">
+                                <input type="radio" name="periodo-estado" value="finalizado" class="form-radio text-gray-500 focus:ring-gray-500">
+                                <span>Finalizado</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label for="periodo-descripcion" class="block text-sm font-semibold text-gray-700 mb-1">Descripción</label>
+                        <textarea id="periodo-descripcion" rows="4" placeholder="Detalles o reglas específicas para este periodo electoral..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-custom-dark-button focus:border-custom-dark-button transition duration-150"></textarea>
+                    </div>
+
+                    <div class="md:col-span-2 pt-6 flex justify-center">
+                        <button type="button" onclick="showCustomMessage('Funcionalidad de Guardar pendiente de implementación.')" class="px-8 py-3 bg-guardar-btn text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-150 transform hover:scale-[1.02] focus:outline-none">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+        </main>
+        
+        <!-- MODAL DE MENSAJE PERSONALIZADO (Para reemplazar a alert()) -->
+        <div id="custom-message-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" onclick="if(event.target.id === 'custom-message-modal') hideCustomMessage()">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6 relative transform transition-all duration-300 scale-100">
+                <h3 class="text-xl font-bold text-custom-dark-button mb-4 border-b pb-2">Notificación</h3>
+                <p id="custom-message-content" class="text-gray-700 mb-6"></p>
+                <div class="flex justify-end">
+                    <button onclick="hideCustomMessage()" class="px-4 py-2 bg-custom-dark-button text-white font-semibold rounded-lg hover:bg-opacity-80 transition duration-150">
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

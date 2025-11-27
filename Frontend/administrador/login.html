@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-custom-blue-bg min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-10 md:p-12 rounded-3xl shadow-2xl max-w-md w-full">
+        <!-- Título -->
+        <h1 class="text-xl md:text-2xl font-serif text-custom-dark-button text-center mb-8">
+            Panel Administrativo
+        </h1>
+
+        <!-- Formulario de Login -->
+        <form action="principal.html" method="GET"> 
+            
+            <div class="mb-6">
+                <label for="usuario" class="block text-md mb-2 text-gray-700">Usuario:</label>
+                <input 
+                    type="email" 
+                    id="usuario" 
+                    name="usuario" 
+                    placeholder="User@example.com"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-bg"
+                    required>
+            </div>
+
+            <div class="mb-8">
+                <label for="contrasena" class="block text-md mb-2 text-gray-700">Contraseña:</label>
+                <input 
+                    type="password" 
+                    id="contrasena" 
+                    name="contrasena" 
+                    placeholder="**********"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-bg"
+                    required>
+            </div>
+
+            <div class="flex justify-center">
+                <button 
+                    type="submit"
+                    class="bg-custom-dark-button text-white text-lg font-semibold py-2 px-8 rounded-lg shadow-lg hover:bg-opacity-90 transition duration-300">
+                    Ingresar
+                </button>
+            </div>
+
+        </form>
+
+        <p class="text-center text-xs text-custom-text-footer mt-10">
+            © 2025 Grupo 3 - Administrador
+        </p>
+    </div>
+
+    <!--Estilos del logins-->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-blue-bg': '#5c79a6', 
+                        'custom-dark-button': '#355b63', 
+                        'custom-text-footer': '#5a5a5a', 
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

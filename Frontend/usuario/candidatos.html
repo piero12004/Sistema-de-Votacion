@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VotUP | Emite tu Voto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+
+    <div class="bg-gray-50 text-center text-sm py-1 border-b border-gray-200">
+        <span class="text-gray-600">Faltan: </span>
+        <span class="font-bold text-red-600 mx-2">X meses</span>
+        <span class="font-bold text-red-600 mx-2">X días</span>
+        <span class="font-bold text-red-600 mx-2">X horas</span>
+    </div>
+
+    <header class="bg-teal-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between p-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <span class="font-extrabold text-white text-xl leading-none">V</span>
+                </div>
+                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">VotUP</h1>
+            </div>
+            <nav class="flex items-center space-x-6">
+                <a href="resultados.html" class="text-white text-lg font-semibold hover:text-gray-300 transition duration-300">
+                    Resultados
+                </a>
+                <a href="index.html" class="bg-white text-teal-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300 shadow-md">
+                    Cerrar Sesion
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 md:p-8 text-center mt-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">
+            Elige a tu Candidato
+        </h2>
+        <p class="text-gray-600 text-lg mb-12">
+            Selecciona a tu candidato de preferencia. Solo puedes emitir un voto.
+        </p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user text-6xl text-gray-500"></i>
+                </div>
+                <p class="text-lg font-medium text-gray-800 mb-6">Candidato 1</p>
+                <button type="button" data-candidato="1"
+                        class="boton-votar bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-8 rounded shadow-md focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-[150px]">
+                    Votar
+                </button>
+            </div>
+            
+            <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user text-6xl text-gray-500"></i>
+                </div>
+                <p class="text-lg font-medium text-gray-800 mb-6">Candidato 2</p>
+                <button type="button" data-candidato="2"
+                        class="boton-votar bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-8 rounded shadow-md focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-[150px]">
+                    Votar
+                </button>
+            </div>
+            
+            <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user text-6xl text-gray-500"></i>
+                </div>
+                <p class="text-lg font-medium text-gray-800 mb-6">Candidato 3</p>
+                <button type="button" data-candidato="3"
+                        class="boton-votar bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-8 rounded shadow-md focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-[150px]">
+                    Votar
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <div id="confirmation-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-sm mx-4 transform transition-all duration-300 relative text-center">
+            
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                Elige a tu Candidato
+            </h2>
+            <p class="text-lg font-semibold text-gray-700 mb-6">
+                ¿Estás seguro que quieres votar por este candidato?
+            </p>
+
+            <div class="w-28 h-28 bg-gray-300 rounded-full flex items-center justify-center mb-4 mx-auto border-4 border-gray-400">
+                <i class="fas fa-user text-5xl text-gray-500"></i>
+            </div>
+            
+            <p id="modal-confirm-candidate-name" class="text-2xl font-bold text-teal-700 mb-8">Candidato [X]</p>
+
+            <div class="flex flex-col space-y-4">
+                <button id="confirm-vote-btn"
+                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 transition duration-300">
+                    Confirmar
+                </button>
+                <button id="cancel-vote-btn"
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-red-300 transition duration-300">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="success-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-sm mx-4 transform transition-all duration-300 relative text-center">
+            
+            <h2 class="text-2xl font-bold text-teal-700 mb-6">
+                Haz votado por
+            </h2>
+
+            <div class="w-28 h-28 bg-gray-300 rounded-full flex items-center justify-center mb-4 mx-auto border-4 border-gray-400">
+                <i class="fas fa-user text-5xl text-gray-500"></i>
+            </div>
+            
+            <p id="modal-success-candidate-name" class="text-xl font-bold text-gray-800 mb-2">Candidato [X]</p>
+            
+            <p id="voted-timestamp" class="text-gray-600 text-sm mb-8">Fecha: 00/00/0000 - Hora: 00:00 am</p>
+
+            <button id="close-success-modal-btn"
+                    class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-8 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-300 w-full max-w-[150px]">
+                Volver
+            </button>
+        </div>
+    </div>
+    
+    <footer class="bg-teal-700 text-white text-center p-4">
+        <p class="text-sm">&copy; 2025 Grupo 3: Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmCandidateName = document.getElementById('modal-confirm-candidate-name');
+        const confirmVoteBtn = document.getElementById('confirm-vote-btn');
+        const cancelVoteBtn = document.getElementById('cancel-vote-btn');
+        
+        const successModal = document.getElementById('success-modal');
+        const successCandidateName = document.getElementById('modal-success-candidate-name');
+        const votedTimestamp = document.getElementById('voted-timestamp');
+        const closeSuccessModalBtn = document.getElementById('close-success-modal-btn');
+        
+        const voteButtons = document.querySelectorAll('.boton-votar');
+
+        let currentCandidateName = ''; 
+
+        function showConfirmationModal(candidateName) {
+            currentCandidateName = candidateName; 
+            confirmCandidateName.textContent = candidateName; 
+            
+            confirmationModal.classList.remove('hidden');
+            confirmationModal.classList.add('flex');
+        }
+
+        function hideConfirmationModal() {
+            confirmationModal.classList.add('hidden');
+            confirmationModal.classList.remove('flex');
+        }
+
+        function showSuccessModal() {
+            const now = new Date();
+            const dateString = now.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            successCandidateName.textContent = currentCandidateName; 
+            votedTimestamp.textContent = `Fecha: ${dateString} - Hora: ${timeString}`;
+            
+            successModal.classList.remove('hidden');
+            successModal.classList.add('flex');
+        }
+
+        function hideSuccessModal() {
+            successModal.classList.add('hidden');
+            successModal.classList.remove('flex');
+            currentCandidateName = '';
+        }
+
+        voteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const candidateCard = button.closest('.flex-col');
+                const candidateName = candidateCard.querySelector('p').textContent; 
+                
+                showConfirmationModal(candidateName);
+            });
+        });
+
+        cancelVoteBtn.addEventListener('click', hideConfirmationModal);
+
+        confirmVoteBtn.addEventListener('click', function() {
+            
+            console.log(`Voto confirmado por: ${currentCandidateName}`);
+            
+            voteButtons.forEach(btn => {
+                btn.textContent = 'Votado';
+                btn.disabled = true;
+                btn.classList.remove('bg-teal-600', 'hover:bg-teal-700');
+                btn.classList.add('bg-gray-500', 'cursor-not-allowed');
+            });
+            
+            hideConfirmationModal();
+            
+            showSuccessModal();
+        });
+
+        closeSuccessModalBtn.addEventListener('click', hideSuccessModal);
+
+        [confirmationModal, successModal].forEach(m => {
+            m.addEventListener('click', function(e) {
+                if (e.target === m) {
+                    if (m.id === 'confirmation-modal') {
+                        hideConfirmationModal();
+                    } else if (m.id === 'success-modal') {
+                        hideSuccessModal();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

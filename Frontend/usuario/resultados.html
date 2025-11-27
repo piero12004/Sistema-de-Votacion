@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VotUP | Resultados de la Votación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <header class="bg-teal-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between p-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <span class="font-extrabold text-white text-xl leading-none">V</span>
+                </div>
+                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">VotUP</h1>
+            </div>
+            <nav class="flex items-center space-x-6">
+                <a href="#" class="text-white text-lg font-bold">
+                    Resultados
+                </a>
+                <a href="index.html" class="bg-white text-teal-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300 shadow-md">
+                    Cerrar Sesion
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 md:p-8 text-center mt-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">
+            Resultados de la votación
+        </h2>
+        <p class="text-gray-600 text-lg mb-12">
+            Resultados de la votaciones
+        </p>
+        <div class="flex flex-col lg:flex-row items-center justify-center gap-16 mb-20">
+            <div class="pie-chart shadow-xl"></div>
+            <div class="flex flex-col items-start space-y-4 max-w-sm w-full">
+                <div class="relative w-full">
+                    <div class="bg-red-600 h-6 rounded-sm" style="width: 25%;"></div>
+                    <span class="absolute top-0 right-full mr-2 text-sm text-gray-700">Candidato 1</span>
+                </div>
+                <div class="relative w-full">
+                    <div class="bg-purple-600 h-6 rounded-sm" style="width: 50%;"></div>
+                    <span class="absolute top-0 right-full mr-2 text-sm text-gray-700">Candidato 2</span>
+                </div>
+                <div class="relative w-full">
+                    <div class="bg-indigo-600 h-6 rounded-sm" style="width: 75%;"></div>
+                    <span class="absolute top-0 right-full mr-2 text-sm text-gray-700">Candidato 3</span>
+                </div>
+                <div class="relative w-full">
+                    <div class="bg-blue-600 h-6 rounded-sm" style="width: 95%;"></div>
+                    <span class="absolute top-0 right-full mr-2 text-sm text-gray-700">Candidato 4</span>
+                </div>
+            </div>
+        </div>
+        
+        <section class="mt-8">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-6">
+                Candidato Ganador
+            </h3>
+            <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl border border-gray-300 mx-auto max-w-xs">
+                <div class="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user text-6xl text-gray-500"></i>
+                </div>
+                <p class="text-xl font-bold text-teal-700">Candidato 3</p>
+                <p class="text-sm text-gray-500">(95% de los votos)</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-teal-700 text-white text-center p-4 mt-20">
+        <p class="text-sm">&copy; 2025 Grupo 3: Todos los derechos reservados</p>
+    </footer>
+
+    <style>
+        .pie-chart {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3b82f6 0% 45%,
+                #8b5cf6 45% 75%, 
+                #ef4444 75% 100%  
+            );
+        }
+    </style>
+</body>
+</html>
