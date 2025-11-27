@@ -53,7 +53,7 @@
                 
                 <div class="w-full md:w-5/12 overflow-hidden">
                     <div class="h-64 md:h-full bg-cover bg-center" 
-                         style="background-image: url(''); background-size: cover; background-position: center; min-height: 250px;">
+                          style="background-image: url(''); background-size: cover; background-position: center; min-height: 250px;">
                     </div>
                 </div>
             </div>
@@ -89,47 +89,55 @@
 
     <div id="login-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                Inicia Sesión
+            <h2 class="text-2xl font-semibold text-teal-700 mb-6 text-center">
+                Verificación de Identidad
             </h2>
+            <p class="text-gray-600 mb-6 text-center text-sm">
+                Ingrese sus datos para acceder a la plataforma de votación.
+            </p>
             <button id="close-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
 
-            <form action="verificacion.html" method="GET"> 
+            <form id="verification-form"> 
+                
                 <div class="mb-4">
-                    <label for="usuario" class="block text-gray-700 text-sm font-bold mb-2">Usuario:</label>
-                    <input type="text" id="usuario" placeholder="Nombre Apellido"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                    <label for="full-name-modal" class="block text-gray-700 text-sm font-bold mb-2">Nombre Completo:</label>
+                    <input type="text" id="full-name-modal" name="full-name" placeholder="Nombre Apellido"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" required>
+                    <p id="error-name" class="text-red-500 text-xs italic hidden">El nombre completo es requerido.</p>
                 </div>
+                
                 <div class="mb-4">
-                    <label for="contrasena" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
-                    <input type="password" id="contrasena" 
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                    <label for="dni-modal" class="block text-gray-700 text-sm font-bold mb-2">DNI:</label>
+                    <input type="number" id="dni-modal" name="dni" placeholder="Ingrese su DNI (8 dígitos)"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
+                           minlength="8" maxlength="8" required>
+                    <p id="error-dni" class="text-red-500 text-xs italic hidden">El DNI debe tener exactamente 8 dígitos numéricos.</p>
                 </div>
-                <div class="flex items-center justify-between text-sm mb-6">
-                    <label class="flex items-center text-gray-600">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded mr-2">
-                        Recordar Contraseña
-                    </label>
-                    
-                    <a href="#" id="open-recover-link" class="text-blue-600 hover:text-blue-800 transition duration-300">
-                        ¿Has olvidado tu contraseña?
-                    </a>
+                
+                <div class="mb-6">
+                    <label for="password-modal" class="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+                    <input type="password" id="password-modal" name="password" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" required>
+                    <p id="error-password" class="text-red-500 text-xs italic hidden">La contraseña es requerida.</p>
                 </div>
 
                 <div class="flex flex-col space-y-3">
-                    <button type="submit"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
-                        Iniciar Sesion
-                    </button>
-                    
-                    <button type="button" id="open-register-btn-from-login"
-                            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
-                        Crear Cuenta
-                    </button>
+                    <a href="candidatos.html" class="w-full">
+                        <button type="button" id="submit-verification-btn"
+                        class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 w-full">
+                            Acceder y Votar
+                        </button>
+                    </a>
+                    <div class="text-center mt-3 text-sm">
+                        <button type="button" id="open-register-btn-from-login" class="text-teal-600 hover:text-teal-800 transition duration-300 ml-4">
+                            Crear Cuenta
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
+    
     <div id="register-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
@@ -140,22 +148,22 @@
                 <div class="mb-4">
                     <label for="full-name" class="block text-gray-700 text-sm font-bold mb-2">Nombre Completo</label>
                     <input type="text" id="full-name" placeholder="Nombre Apellido"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
                 <div class="mb-4">
-                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="correo@gmail.com"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                    <label for="dni" class="block text-gray-700 text-sm font-bold mb-2">DNI</label>
+                    <input type="dni" id="dni" placeholder="Ejm: 12345678"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
                 <div class="mb-4">
                     <label for="reg-password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
                     <input type="password" id="reg-password" 
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
                 <div class="mb-4">
                     <label for="confirm-password" class="block text-gray-700 text-sm font-bold mb-2">Confirmacion de Contraseña</label>
                     <input type="password" id="confirm-password" 
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
                 <div class="flex items-center text-sm mb-6">
                     <label class="flex items-center text-gray-600">
@@ -172,28 +180,7 @@
             </form>
         </div>
     </div>
-    <div id="recover-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 relative">
-            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6 text-center leading-snug">
-                ¿Olvidaste tu contraseña? <span class="block font-bold">Envía un mensaje de recuperacion a tu correo</span>
-            </h2>
-            <button id="close-recover-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
-            <form>
-                <div class="mb-6">
-                    <label for="recover-email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electronico</label>
-                    <input type="email" id="recover-email" placeholder="correo@gmail.com"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
-                </div>
 
-                <div class="flex justify-center">
-                    <button type="submit"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-xs">
-                        Recuperar Contraseña
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
     <footer class="bg-teal-700 text-white text-center p-4 mt-20">
         <p class="text-sm">&copy; 2025 Grupo 3: Todos los derechos reservados</p>
     </footer>
@@ -203,8 +190,6 @@
         const openLoginBtn = document.getElementById('open-modal-btn');
         const closeLoginBtn = document.getElementById('close-modal'); 
         const openRegisterBtn = document.getElementById('open-register-btn-from-login');
-        const openRecoverLink = document.getElementById('open-recover-link');
-
         const registerModal = document.getElementById('register-modal');
         const closeRegisterBtn = document.getElementById('close-register-modal'); 
 
@@ -229,9 +214,62 @@
         closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
         registerModal.addEventListener('click', (e) => { if (e.target === registerModal) { toggleModal(registerModal, false); } });
 
-        openRecoverLink.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, false); toggleModal(recoverModal, true); });
         closeRecoverBtn.addEventListener('click', () => toggleModal(recoverModal, false));
         recoverModal.addEventListener('click', (e) => { if (e.target === recoverModal) { toggleModal(recoverModal, false); } });
+
+        const verificationForm = document.getElementById('verification-form');
+        const fullNameInput = document.getElementById('full-name-modal');
+        const dniInput = document.getElementById('dni-modal');
+        const passwordInput = document.getElementById('password-modal');
+        
+        const errorName = document.getElementById('error-name');
+        const errorDNI = document.getElementById('error-dni');
+        const errorPassword = document.getElementById('error-password');
+
+        function validateField(inputElement, errorElement, condition, errorMessage) {
+            if (condition) {
+                errorElement.textContent = errorMessage;
+                errorElement.classList.remove('hidden');
+                inputElement.classList.add('border-red-500'); 
+                return false;
+            } else {
+                errorElement.classList.add('hidden');
+                inputElement.classList.remove('border-red-500');
+                inputElement.classList.add('border-green-500'); 
+                return true;
+            }
+        }
+
+        verificationForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            let isNameValid = validateField(
+                fullNameInput, errorName, 
+                fullNameInput.value.trim() === "", 
+                "El nombre completo es requerido."
+            );
+            
+            let isDNIValid = validateField(
+                dniInput, errorDNI, 
+                dniInput.value.trim() === "" || dniInput.value.length !== 8 || !/^\d{8}$/.test(dniInput.value),
+                "El DNI debe tener exactamente 8 dígitos numéricos."
+            );
+
+            let isPasswordValid = validateField(
+                passwordInput, errorPassword, 
+                passwordInput.value.trim() === "", 
+                "La contraseña es requerida."
+            );
+
+            if (isNameValid && isDNIValid && isPasswordValid) {
+                
+                console.log(`Verificación exitosa (FRONTEND). Redirigiendo a candidatos...`);
+                
+                toggleModal(loginModal, false);
+                
+                window.location.href = 'candidatos.html'; 
+            }
+        });
     </script>
 
 </body>
