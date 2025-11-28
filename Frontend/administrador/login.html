@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administrativo - Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-custom-blue-bg min-h-screen flex items-center justify-center p-4">
     <div class="bg-white p-10 md:p-12 rounded-3xl shadow-2xl max-w-md w-full">
         <!-- Título -->
@@ -14,33 +16,24 @@
         </h1>
 
         <!-- Formulario de Login -->
-        <form action="principal.html" method="GET"> 
-            
+        <form id="formLogin">
+
             <div class="mb-6">
                 <label for="usuario" class="block text-md mb-2 text-gray-700">Usuario:</label>
-                <input 
-                    type="email" 
-                    id="usuario" 
-                    name="usuario" 
-                    placeholder="User@example.com"
+                <input type="email" id="usuario" name="usuario" placeholder="User@example.com"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-bg"
                     required>
             </div>
 
             <div class="mb-8">
                 <label for="contrasena" class="block text-md mb-2 text-gray-700">Contraseña:</label>
-                <input 
-                    type="password" 
-                    id="contrasena" 
-                    name="contrasena" 
-                    placeholder="**********"
+                <input type="password" id="contrasena" name="contrasena" placeholder="**********"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-bg"
                     required>
             </div>
 
             <div class="flex justify-center">
-                <button 
-                    type="submit"
+                <button type="submit"
                     class="bg-custom-dark-button text-white text-lg font-semibold py-2 px-8 rounded-lg shadow-lg hover:bg-opacity-90 transition duration-300">
                     Ingresar
                 </button>
@@ -59,14 +52,53 @@
             theme: {
                 extend: {
                     colors: {
-                        'custom-blue-bg': '#5c79a6', 
-                        'custom-dark-button': '#355b63', 
-                        'custom-text-footer': '#5a5a5a', 
+                        'custom-blue-bg': '#5c79a6',
+                        'custom-dark-button': '#355b63',
+                        'custom-text-footer': '#5a5a5a',
                     }
                 }
             }
         }
     </script>
 
+    <!-- 🔥 SCRIPT PARA CONECTAR CON BACKEND -->
+    <script>
+        const form = document.getElementById("formLogin");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const usuario = document.getElementById("usuario").value;
+            const contraseña = document.getElementById("contrasena").value;
+
+            try {
+                const res = await fetch("http://localhost:3000/api/admin/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ usuario, password: contraseña })  // 🔥 CORREGIDO
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.message || "Credenciales incorrectas");
+                    return;
+                }
+
+                localStorage.setItem("tokenAdmin", data.token);
+
+                window.location.href = "principal.html";
+
+            } catch (error) {
+                alert("Error al conectar con el servidor");
+                console.error(error);
+            }
+        });
+    </script>
+
+
 </body>
+
 </html>

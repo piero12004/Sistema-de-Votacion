@@ -1,7 +1,7 @@
 import Usuario from "../models/Usuario.js";
 import generarToken from "../utils/generarToken.js";
 
-export const registroUsuario = async (req, res) => {
+export const registerUsuario = async (req, res) => {
   try {
     const { nombre, dni, password } = req.body;
 

@@ -4,13 +4,15 @@ import ProcesoElectoral from "../models/ProcesoElectoral.js";
 // Registrar un voto
 export const crearVoto = async (req, res) => {
   try {
-    const { usuario, proceso, candidato } = req.body;
-
+    const usuario = req.usuarioId; // viene del token
+    const { proceso, candidato } = req.body;
+    
     // Validar si ya votó en este proceso
     const votoExistente = await Voto.findOne({ usuario, proceso });
     if (votoExistente) {
-      return res.status(400).json({ error: "El usuario ya ha votado en este proceso." });
+      return res.status(403).json({ error: "Ya votaste en este proceso." });
     }
+
 
     // Validar si el proceso sigue activo
     const proc = await ProcesoElectoral.findById(proceso);
