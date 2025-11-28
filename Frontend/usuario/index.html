@@ -242,7 +242,7 @@ loginForm.addEventListener('submit', async (e) => {
     if (!valid) return;
 
     try {
-        const res = await fetch('http://localhost:3000/api/usuario/login', {
+        const res = await fetch('https://sistema-de-votacion-gjzq.onrender.com/api/usuario/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ dni: dniInput.value, password: passwordInput.value })
@@ -287,7 +287,7 @@ registerForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const res = await fetch('http://localhost:3000/api/usuario/register', {
+        const res = await fetch('https://sistema-de-votacion-gjzq.onrender.com/api/usuario/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
