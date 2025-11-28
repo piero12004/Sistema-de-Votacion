@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: ["http://localhost:5000", "http://localhost:8080"],
+    origin: ["http://localhost:5000", "http://localhost:8080","https://sistema-de-votacion-admin.onrender.com","https://sistema-de-votacion-usuario.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
