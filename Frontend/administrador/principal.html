@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administrativo - Principal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body class="bg-main-bg">
     <div class="flex min-h-screen">
-        <!--Sidebar-->
+
+        <!-- SIDEBAR -->
         <div class="w-sidebar-width bg-sidebar-bg text-white flex flex-col justify-between p-4 fixed h-full shadow-lg">
             <div>
                 <div class="flex items-center space-x-3 mb-8 border-b border-gray-500 pb-4">
@@ -20,41 +22,47 @@
                     <span class="text-xl font-semibold">Usuario</span>
                 </div>
 
-                <!--Opciones del Sidebar-->
                 <nav class="space-y-3">
                     <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-sidebar-btn-active text-gray-800 font-medium shadow-md">
                         <i class="fas fa-home w-5 h-5 text-custom-dark-button"></i>
                         <span>Panel principal</span>
                     </a>
-                    
-                    <a href="procesos-electorales.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+
+                    <a href="procesos-electorales.html"
+                        class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
                         <i class="fas fa-clipboard-list w-5 h-5"></i>
                         <span>Procesos electorales</span>
                     </a>
-                    <a href="candidatos.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+
+                    <a href="candidatos.html"
+                        class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
                         <i class="fas fa-users w-5 h-5"></i>
                         <span>Candidatos</span>
                     </a>
-                    <a href="fechas-y-periodos.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+
+                    <a href="fechas-y-periodos.html"
+                        class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
                         <i class="fas fa-calendar-alt w-5 h-5"></i>
                         <span>Fechas y Periodos</span>
                     </a>
-                    <a href="resultados.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
+
+                    <a href="resultados.html"
+                        class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition duration-150 text-white">
                         <i class="fas fa-chart-bar w-5 h-5"></i>
                         <span>Resultados</span>
                     </a>
                 </nav>
             </div>
 
-            <!--Cerrar sesion-->
             <div class="mt-8">
-                <a href="login.html" class="w-full py-3 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-150 shadow-md flex justify-center">
+                <button id="btnLogout"
+                    class="w-full py-3 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-150 shadow-md flex justify-center">
                     Cerrar Sesion
-                </a>
+                </button>
             </div>
         </div>
-        
-        <!--Contenido de la pagina principal-->
+
+        <!-- CONTENIDO -->
         <main class="flex-1 p-8 md:p-12 ml-sidebar-width">
             <div class="mb-10 text-center">
                 <h1 class="text-3xl font-serif text-main-title">
@@ -65,129 +73,319 @@
             <h2 class="text-xl font-bold text-main-title border-b pb-2 mb-6">
                 PANEL ADMINISTRACIÓN
             </h2>
-            
+
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-main-title">
                     Procesos electorales activos
                 </h3>
-                <button class="py-2 px-4 bg-new-process-btn text-main-title font-bold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
+                <button id="btnAbrirModal"
+                    class="py-2 px-4 bg-new-process-btn text-main-title font-bold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
                     Crear Nuevo Proceso
                 </button>
             </div>
 
-            <!--Procesos electorales-->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/98C1D9/FFFFFF?text=Comite+Etica');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Comité de Etica</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
+            <!-- CONTENEDOR DINÁMICO -->
+            <div id="contenedorProcesos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/3D5A80/FFFFFF?text=Elecciones+Estudiantiles');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Elecciones Estudiantiles</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
+        </main>
+    </div>
 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/C79C95/FFFFFF?text=Delegados+Facultad');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Delegados de la Facultad</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/C1C795/FFFFFF?text=Renovacion+Junta');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Renovacion Junta</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
+ <!-- ===================================================
+     MODAL PARA CREAR PROCESO (ACTUALIZADO AL MODELO)
+=================================================== -->
+<div id="modalProceso"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex justify-center items-center">
 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/95C79B/FFFFFF?text=Presupuestos+Participativos');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Presupuestos Participativos</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
+    <div id="modalContenido"
+        class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl transform scale-90 opacity-0 transition-all duration-300">
 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-40 bg-cover bg-center relative" 
-                            style="background-image: url('https://placehold.co/600x400/95A8C7/FFFFFF?text=Eleccion+Decano');">
-                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-                            <div class="absolute bottom-0 left-0 p-3 text-white">
-                                <h4 class="text-xl font-bold">Eleccion Decano</h4>
-                                <p class="text-sm">periodo: 20/11/2025 - 25/11/2025</p>
-                            </div>
-                        </div>
-                        <div class="p-3 flex justify-between items-center bg-gray-50">
-                            <span class="text-yellow-600 font-bold uppercase text-xs">Próximo</span>
-                            <a href="#" class="text-blue-600 font-semibold hover:underline">Ver detalles</a>
-                        </div>
-                    </div>
+        <h2 class="text-2xl font-semibold mb-4 text-main-title text-center">
+            Crear Proceso Electoral
+        </h2>
+
+        <form id="formProceso" class="space-y-4">
+
+            <!-- NOMBRE -->
+            <div>
+                <label class="font-semibold text-sm">Nombre del proceso</label>
+                <input required id="nombre" type="text"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300" />
+            </div>
+
+            <!-- TIPO -->
+            <div>
+                <label class="font-semibold text-sm">Tipo de proceso</label>
+                <div class="flex items-center space-x-4 mt-1">
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="tipo" value="presencial" required>
+                        <span>Presencial</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="tipo" value="online" required>
+                        <span>Online</span>
+                    </label>
                 </div>
-            </main>
-        </div>
-    </body>
+            </div>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'main-bg': '#f3f4f6', 
-                        'sidebar-bg': '#3c676e', 
-                        'main-title': '#2e4963', 
-                        'new-process-btn': '#a3e6ff', 
-                        'sidebar-btn-active': '#e5e7eb', 
-                        'custom-dark-button': '#355b63',
-                    },
-                    spacing: {
-                        'sidebar-width': '16rem', 
-                    }
+            <!-- ESTADO -->
+            <div>
+                <label class="font-semibold text-sm block mb-1">Estado</label>
+                <div class="flex justify-between">
+                    <button type="button" data-estado="activo"
+                        class="estado-btn px-3 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 w-full mx-1">
+                        Aprobado
+                    </button>
+
+                    <button type="button" data-estado="pendiente"
+                        class="estado-btn px-3 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 w-full mx-1">
+                        En revisión
+                    </button>
+
+                    <button type="button" data-estado="observacion"
+                        class="estado-btn px-3 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 w-full mx-1">
+                        Rechazado
+                    </button>
+                </div>
+
+                <!-- Campo oculto donde guardamos el estado seleccionado -->
+                <input type="hidden" id="estado" value="pendiente">
+            </div>
+
+            <!-- FECHAS -->
+            <div>
+                <label class="font-semibold text-sm">Fecha inicio</label>
+                <input required id="fechaInicio" type="date"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300" />
+            </div>
+
+            <div>
+                <label class="font-semibold text-sm">Fecha fin</label>
+                <input required id="fechaFin" type="date"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300" />
+            </div>
+
+            <!-- BOTÓN PRINCIPAL -->
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-lg shadow hover:bg-blue-700 transition">
+                Registrar Nuevo Proceso
+            </button>
+        </form>
+
+        <button id="btnCerrarModal"
+            class="mt-3 w-full py-2 text-center text-gray-600 hover:underline">
+            Rechazar Proceso
+        </button>
+
+    </div>
+</div>
+
+
+</body>
+
+<!-- ===================================================
+     Tailwind config
+=================================================== -->
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'main-bg': '#f3f4f6',
+                    'sidebar-bg': '#3c676e',
+                    'main-title': '#2e4963',
+                    'new-process-btn': '#a3e6ff',
+                    'sidebar-btn-active': '#e5e7eb',
+                    'custom-dark-button': '#355b63',
+                },
+                spacing: {
+                    'sidebar-width': '16rem',
                 }
             }
         }
-    </script>
+    };
+</script>
+
+<script>
+    const token = localStorage.getItem("tokenAdmin"); // Necesario para la autorización
+
+    async function cargarProcesos() {
+        const contenedor = document.getElementById("contenedorProcesos");
+        contenedor.innerHTML = '<p class="text-center text-gray-500">Cargando procesos...</p>'; // Mensaje de carga
+
+        try {
+            // Usaremos la ruta GET /api/proceso (que usa obtenerProcesos del controlador)
+            const res = await fetch("http://localhost:3000/api/proceso", { 
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!res.ok) {
+                // Si la respuesta no es 200 (ej: 401 Unauthorized o 500 Server Error)
+                throw new Error("Error al obtener la lista de procesos.");
+            }
+
+            const procesos = await res.json();
+
+            if (procesos.length === 0) {
+                contenedor.innerHTML = '<p class="text-center text-gray-500 mt-5">No hay procesos electorales registrados.</p>';
+                return;
+            }
+
+            // Generamos las tarjetas (cards) con los datos
+            contenedor.innerHTML = procesos.map(p => {
+                // Formateamos las fechas
+                const fechaInicio = new Date(p.fechaInicio).toLocaleDateString();
+                const fechaCierre = new Date(p.fechaCierre).toLocaleDateString();
+                
+                // Mapeo de estado a clase de Tailwind para el color
+                let estadoClase = 'bg-gray-400';
+                if (p.estado === 'Activo') estadoClase = 'bg-green-500';
+                else if (p.estado === 'Pendiente') estadoClase = 'bg-yellow-500';
+                else if (p.estado === 'Observacion') estadoClase = 'bg-red-500';
+
+                return `
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                        <div class="h-32 flex items-end p-4 relative" style="background-color: #98C1D9;">
+                            <span class="absolute top-2 right-2 text-xs font-bold px-3 py-1 rounded-full text-white ${estadoClase}">
+                                ${p.estado}
+                            </span>
+                            <div class="text-white">
+                                <h4 class="text-xl font-bold">${p.nombre}</h4>
+                                <p class="text-sm">${p.tipo}</p>
+                            </div>
+                        </div>
+                        <div class="p-3 text-sm text-gray-700">
+                            <p class="flex justify-between">
+                                <span><i class="fas fa-calendar-day mr-2"></i> Inicio:</span>
+                                <span>${fechaInicio}</span>
+                            </p>
+                            <p class="flex justify-between border-b pb-2 mb-2">
+                                <span><i class="fas fa-calendar-times mr-2"></i> Cierre:</span>
+                                <span>${fechaCierre}</span>
+                            </p>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-sm font-semibold text-blue-600">Votos: ${p.totalVotos || 0}</span>
+                                <a href="detalles-proceso.html?id=${p._id}" class="py-1 px-3 bg-blue-100 text-blue-600 font-semibold rounded-lg hover:bg-blue-200 transition">
+                                    Ver / Editar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+        } catch (e) {
+            console.error("Error al cargar procesos:", e);
+            contenedor.innerHTML = `<p class="text-red-600 text-center mt-5">❌ ${e.message}</p>`;
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. VERIFICAR TOKEN (Seguridad)
+        const token = localStorage.getItem("tokenAdmin");
+        if (!token) {
+            window.location.href = "login.html";
+            return; 
+        }
+
+        // 2. REFERENCIAS DOM
+        const modal = document.getElementById("modalProceso");
+        const modalContenido = document.getElementById("modalContenido");
+        const btnAbrir = document.getElementById("btnAbrirModal");
+        const btnCerrar = document.getElementById("btnCerrarModal");
+        const form = document.getElementById("formProceso");
+        
+        // Inputs del formulario
+        const nombreInput = document.getElementById("nombre");
+        const fechaInicioInput = document.getElementById("fechaInicio");
+        const fechaFinInput = document.getElementById("fechaFin"); // Ojo con este ID en el HTML
+        const estadoHiddenInput = document.getElementById("estado"); 
+        const btnsEstado = document.querySelectorAll(".estado-btn");
+
+        // 3. FUNCIONES DEL MODAL
+        const abrirModal = () => {
+            modal.classList.remove("hidden");
+            setTimeout(() => modalContenido.classList.remove("opacity-0", "scale-90"), 10);
+        };
+
+        const cerrarModal = () => {
+            modalContenido.classList.add("opacity-0", "scale-90");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                form.reset();
+                resetEstadoBotones();
+            }, 200);
+        };
+
+        btnAbrir.addEventListener("click", abrirModal);
+        btnCerrar.addEventListener("click", cerrarModal);
+
+        // 4. LÓGICA DE BOTONES DE ESTADO
+        const resetEstadoBotones = () => {
+             btnsEstado.forEach(b => b.classList.remove("ring-4", "ring-offset-2", "ring-gray-400"));
+        };
+
+        btnsEstado.forEach(btn => {
+            btn.addEventListener("click", () => {
+                estadoHiddenInput.value = btn.dataset.estado; // Actualiza el input oculto
+                resetEstadoBotones();
+                btn.classList.add("ring-4", "ring-offset-2", "ring-gray-400"); // Marca visualmente
+            });
+        });
+
+        // 5. ENVIAR FORMULARIO AL BACKEND
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Obtener el valor del radio button seleccionado
+            const tipoSeleccionado = document.querySelector("input[name='tipo']:checked");
+            
+            if(!tipoSeleccionado) {
+                alert("Por favor selecciona un tipo (Presencial/Online)");
+                return;
+            }
+
+            const datos = {
+                nombre: nombreInput.value,
+                tipo: tipoSeleccionado.value,
+                estado: estadoHiddenInput.value,
+                fechaInicio: fechaInicioInput.value,
+                fechaFin: fechaFinInput.value 
+            };
+
+            try {
+                // Asegúrate que la ruta sea la correcta (singular o plural según tu routes.js)
+                const res = await fetch("http://localhost:3000/api/proceso", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("✅ Proceso creado exitosamente");
+                    cerrarModal();
+                    cargarProcesos();
+                    location.reload(); // Por ahora recargamos la página para ver cambios si ya listas
+                } else {
+                    alert("❌ Error: " + (data.message || data.error));
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Error de conexión con el servidor");
+            }
+        });
+    });
+</script>
+
 </html>

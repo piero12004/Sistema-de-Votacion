@@ -1,6 +1,8 @@
 import ProcesoElectoral from "../models/ProcesoElectoral.js";
 import Voto from "../models/Voto.js";
 
+const capitalizar = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 // Crear proceso
 export const crearProceso = async (req, res) => {
   try {
