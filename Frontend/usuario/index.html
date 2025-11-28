@@ -178,91 +178,142 @@
     </footer>
 
     <script>
-        const loginModal = document.getElementById('login-modal');
-        const openLoginBtn = document.getElementById('open-modal-btn');
-        const closeLoginBtn = document.getElementById('close-modal'); 
-        const openRegisterBtn = document.getElementById('open-register-btn-from-login');
-        const registerModal = document.getElementById('register-modal');
-        const closeRegisterBtn = document.getElementById('close-register-modal'); 
+const loginModal = document.getElementById('login-modal');
+const openLoginBtn = document.getElementById('open-modal-btn');
+const closeLoginBtn = document.getElementById('close-modal'); 
+const openRegisterBtn = document.getElementById('open-register-btn-from-login');
+const registerModal = document.getElementById('register-modal');
+const closeRegisterBtn = document.getElementById('close-register-modal'); 
 
-        const recoverModal = document.getElementById('recover-modal');
-        const closeRecoverBtn = document.getElementById('close-recover-modal'); 
-        
-        function toggleModal(modal, show = true) {
-            if (show) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
+function toggleModal(modal, show = true) {
+    if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
 
-        openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, true); });
-        closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
-        loginModal.addEventListener('click', (e) => { if (e.target === loginModal) { toggleModal(loginModal, false); } });
+// Abrir y cerrar modales
+openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, true); });
+closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
+loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
 
-        openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
-        closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
-        registerModal.addEventListener('click', (e) => { if (e.target === registerModal) { toggleModal(registerModal, false); } });
+openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
+closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
+registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
 
-        closeRecoverBtn.addEventListener('click', () => toggleModal(recoverModal, false));
-        recoverModal.addEventListener('click', (e) => { if (e.target === recoverModal) { toggleModal(recoverModal, false); } });
+// Formulario de login
+const loginForm = document.getElementById('verification-form');
+const dniInput = document.getElementById('dni-modal');
+const passwordInput = document.getElementById('password-modal');
+const errorDNI = document.getElementById('error-dni');
+const errorPassword = document.getElementById('error-password');
 
-        const verificationForm = document.getElementById('verification-form');
-        const fullNameInput = document.getElementById('full-name-modal');
-        const dniInput = document.getElementById('dni-modal');
-        const passwordInput = document.getElementById('password-modal');
-        
-        const errorName = document.getElementById('error-name');
-        const errorDNI = document.getElementById('error-dni');
-        const errorPassword = document.getElementById('error-password');
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        function validateField(inputElement, errorElement, condition, errorMessage) {
-            if (condition) {
-                errorElement.textContent = errorMessage;
-                errorElement.classList.remove('hidden');
-                inputElement.classList.add('border-red-500'); 
-                return false;
-            } else {
-                errorElement.classList.add('hidden');
-                inputElement.classList.remove('border-red-500');
-                inputElement.classList.add('border-green-500'); 
-                return true;
-            }
-        }
+    let valid = true;
 
-        verificationForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
+    // Validaciones simples
+    if (!/^\d{8}$/.test(dniInput.value)) {
+        errorDNI.textContent = "El DNI debe tener 8 dígitos.";
+        errorDNI.classList.remove('hidden');
+        dniInput.classList.add('border-red-500');
+        valid = false;
+    } else {
+        errorDNI.classList.add('hidden');
+        dniInput.classList.remove('border-red-500');
+        dniInput.classList.add('border-green-500');
+    }
 
-            let isNameValid = validateField(
-                fullNameInput, errorName, 
-                fullNameInput.value.trim() === "", 
-                "El nombre completo es requerido."
-            );
-            
-            let isDNIValid = validateField(
-                dniInput, errorDNI, 
-                dniInput.value.trim() === "" || dniInput.value.length !== 8 || !/^\d{8}$/.test(dniInput.value),
-                "El DNI debe tener exactamente 8 dígitos numéricos."
-            );
+    if (!passwordInput.value.trim()) {
+        errorPassword.textContent = "La contraseña es requerida.";
+        errorPassword.classList.remove('hidden');
+        passwordInput.classList.add('border-red-500');
+        valid = false;
+    } else {
+        errorPassword.classList.add('hidden');
+        passwordInput.classList.remove('border-red-500');
+        passwordInput.classList.add('border-green-500');
+    }
 
-            let isPasswordValid = validateField(
-                passwordInput, errorPassword, 
-                passwordInput.value.trim() === "", 
-                "La contraseña es requerida."
-            );
+    if (!valid) return;
 
-            if (isNameValid && isDNIValid && isPasswordValid) {
-                
-                console.log(`Verificación exitosa (FRONTEND). Redirigiendo a candidatos...`);
-                
-                toggleModal(loginModal, false);
-                
-                window.location.href = 'candidatos.html'; 
-            }
+    try {
+        const res = await fetch('http://localhost:3000/api/usuario/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dni: dniInput.value, password: passwordInput.value })
         });
-    </script>
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "Error en login");
+            return;
+        }
+
+        console.log("Login exitoso:", data);
+        toggleModal(loginModal, false);
+        // Guardar token si quieres
+        localStorage.setItem('token', data.token);
+        window.location.href = 'candidatos.html';
+
+    } catch (err) {
+        console.error("Error al conectar con el backend:", err);
+        alert("Error de conexión al servidor.");
+    }
+});
+
+// Formulario de registro
+const registerForm = registerModal.querySelector('form');
+const fullNameInput = document.getElementById('full-name');
+const dniRegisterInput = document.getElementById('dni');
+const passwordRegisterInput = document.getElementById('reg-password');
+const confirmPasswordInput = document.getElementById('confirm-password');
+
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!fullNameInput.value.trim() || !/^\d{8}$/.test(dniRegisterInput.value) || !passwordRegisterInput.value.trim()) {
+        alert("Complete todos los campos correctamente.");
+        return;
+    }
+
+    if (passwordRegisterInput.value !== confirmPasswordInput.value) {
+        alert("Las contraseñas no coinciden.");
+        return;
+    }
+
+    try {
+        const res = await fetch('http://localhost:3000/api/usuario/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombre: fullNameInput.value,
+                dni: dniRegisterInput.value,
+                password: passwordRegisterInput.value
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "Error al registrar usuario");
+            return;
+        }
+
+        alert("Registro exitoso. Ahora puede iniciar sesión.");
+        toggleModal(registerModal, false);
+        toggleModal(loginModal, true);
+
+    } catch (err) {
+        console.error("Error al conectar con el backend:", err);
+        alert("Error de conexión al servidor.");
+    }
+});
+</script>
 
 </body>
 </html>
