@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "admin": "node server-admin.js",
-    "usuario": "node server-usuario.js"
+    "usuario": "node server-usuario.js",
+    "start:admin": "node server-admin.js",
+    "start:usuario": "node server-usuario.js"
   },
   "keywords": [],
   "author": "",
