@@ -112,38 +112,91 @@
                             <img id="modal-candidate-img" src="https://placehold.co/160x160/d8e2ee/355b63?text=Avatar" alt="Avatar del Candidato" class="w-full h-full object-cover" />
                         </div>
                         <h3 id="modal-candidate-name" class="text-2xl font-bold text-main-title">Candidato [Nombre]</h3>
-                        <p id="modal-candidate-process" class="text-sm text-gray-500 mt-1 italic"></p>
                     </div>
 
                     <div class="md:w-2/3 space-y-3">
-                        <p class="text-gray-700"><span class="font-semibold text-custom-dark-button">ID:</span> <span id="modal-candidate-id" class="font-mono">N/A</span></p>
+                        <input type="hidden" id="modal-candidate-hidden-id">
+
+                        <p class="text-gray-700"><span class="font-semibold text-custom-dark-button">DNI:</span> <span id="modal-candidate-id" class="font-mono">N/A</span></p>
                         <p class="text-gray-700"><span class="font-semibold text-custom-dark-button">Cargo:</span> <span id="modal-candidate-cargo">N/A</span></p>
                         <p class="text-gray-700"><span class="font-semibold text-custom-dark-button">Estado:</span> <span id="modal-candidate-estado" class="font-bold text-green-600">N/A</span></p>
                         
-                        <div class="pt-2">
-                            <p class="font-semibold text-custom-dark-button mb-1">Observaciones:</p>
-                            <div id="modal-candidate-observaciones" class="p-3 bg-gray-50 border rounded-lg text-sm text-gray-600 italic h-20 overflow-y-auto">
-                                No hay observaciones registradas.
-                            </div>
-                        </div>
+                        <p class="text-gray-700" id="modal-candidate-process-wrapper">
+                            <span class="font-semibold text-custom-dark-button">Proceso:</span>
+                            <span id="modal-candidate-process" class="font-mono"></span>
+                        </p>
+
 
                         <div class="pt-4 flex space-x-3 items-center">
                             <span class="font-semibold text-custom-dark-button text-lg">Acciones:</span>
-                            <button class="px-4 py-2 bg-edit-btn text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
+                            <button 
+                                onclick="showEditFromDetailsModal()" 
+                                class="px-4 py-2 bg-edit-btn text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
                                 <i class="fas fa-edit mr-1"></i> Editar
                             </button>
-                            <button class="px-4 py-2 bg-custom-dark-button text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
-                                <i class="fas fa-archive mr-1"></i> Archivar
-                            </button>
-                            <button class="px-4 py-2 bg-delete-btn text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-150">
+
+                            <button onclick="eliminarCandidatoModal('${candidate.id}')" class="px-4 py-2 bg-delete-btn text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-150">
                                 <i class="fas fa-trash-alt mr-1"></i> Eliminar
                             </button>
+
                         </div>
                     </div>
                     
                 </div>
             </div>
         </div>
+
+        <!-- Modal Editar Candidato -->
+        <div id="edit-candidate-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" 
+            onclick="if(event.target.id === 'edit-candidate-modal') hideEditCandidateModal()">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 p-8 relative transform transition-all duration-300 scale-100">
+                
+                <button onclick="hideEditCandidateModal()" 
+                        class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold focus:outline-none">
+                    &times;
+                </button>
+
+                <h2 class="text-3xl font-serif text-main-title mb-6 border-b pb-3">Editar Candidato</h2>
+                
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="font-semibold text-custom-dark-button">Nombre</label>
+                        <input type="text" id="edit-name" class="w-full border rounded p-2 mt-1" />
+                    </div>
+                    <div>
+                        <label class="font-semibold text-custom-dark-button">DNI</label>
+                        <input type="text" id="edit-dni" class="w-full border rounded p-2 mt-1" />
+                    </div>
+                    <div>
+                        <label class="font-semibold text-custom-dark-button">Cargo</label>
+                        <input type="text" id="edit-cargo" class="w-full border rounded p-2 mt-1" />
+                    </div>
+                    <div>
+                        <label class="font-semibold text-custom-dark-button">Estado</label>
+                        <select id="edit-estado" class="w-full border rounded p-2 mt-1" onchange="controlarProcesoEditVisibility()">
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div id="edit-proceso-wrapper">
+                        <label class="font-semibold text-custom-dark-button">Proceso</label>
+                        <select id="edit-proceso" class="w-full border rounded p-2 mt-1"></select>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex justify-end space-x-3">
+                    <button onclick="hideEditCandidateModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 transition">
+                        Cancelar
+                    </button>
+                    <button onclick="guardarEdicionCandidato()" 
+                            class="px-4 py-2 bg-edit-btn text-white font-semibold rounded-lg hover:bg-opacity-80 transition">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+
         
         <!-- Modal para crear un nuevo candidato -->
         <div id="new-candidate-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" onclick="if(event.target.id === 'new-candidate-modal') hideNewCandidateModal()">
@@ -188,11 +241,12 @@
                     </div>
 
                     <div id="new-proceso-wrapper">
-                        <label for="new-proceso" class="block text-sm font-semibold text-gray-700 mb-1">Proceso:</label>
-                        <select id="new-proceso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
-                            <!-- Opciones cargadas dinámicamente -->
-                        </select>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Procesos:</label>
+                        <div id="new-proceso-checkboxes" class="space-y-1">
+                            <!-- Checkboxes dinámicos -->
+                        </div>
                     </div>
+
 
                     <div class="pt-4 flex justify-center">
                         <button type="button" onclick="crearNuevoCandidato()" class="px-8 py-3 bg-register-btn text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
@@ -207,6 +261,87 @@
 
         
     </div>
+
+    <script>
+        let candidatoEditarId = null;
+
+        // Mostrar modal de edición
+        function showEditCandidateModal(candidateId) {
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+
+            candidatoEditarId = candidateId;
+
+            document.getElementById('edit-name').value = candidate.name;
+            document.getElementById('edit-dni').value = candidate.dni;
+            document.getElementById('edit-cargo').value = candidate.cargo;
+            document.getElementById('edit-estado').value = candidate.estado;
+
+            // Cargar procesos en el select
+            const select = document.getElementById("edit-proceso");
+            select.innerHTML = procesos.map(p => `<option value="${p._id}">${p.nombre}</option>`).join('');
+            if (candidate.estado === 'activo' && candidate.currentProcess !== "N/A") {
+                const opcion = procesos.find(p => p.nombre === candidate.currentProcess);
+                if (opcion) select.value = opcion._id;
+            }
+
+            controlarProcesoEditVisibility();
+
+            document.getElementById('edit-candidate-modal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        // Ocultar modal de edición
+        function hideEditCandidateModal() {
+            document.getElementById('edit-candidate-modal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Mostrar u ocultar select de proceso según estado
+        function controlarProcesoEditVisibility() {
+            const estado = document.getElementById('edit-estado').value;
+            const wrapper = document.getElementById('edit-proceso-wrapper');
+            if (estado === 'inactivo') {
+                wrapper.classList.add('hidden');
+            } else {
+                wrapper.classList.remove('hidden');
+            }
+        }
+
+        // Guardar cambios
+        async function guardarEdicionCandidato() {
+            if (!candidatoEditarId) return;
+
+            const nombre = document.getElementById('edit-name').value;
+            const dni = document.getElementById('edit-dni').value;
+            const cargo = document.getElementById('edit-cargo').value;
+            const estado = document.getElementById('edit-estado').value;
+            const proceso = estado === 'inactivo' ? null : document.getElementById('edit-proceso').value;
+
+            if (!nombre || !dni || !cargo || (estado !== 'inactivo' && !proceso)) {
+                alert("Completa los campos obligatorios.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/${candidatoEditarId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nombre, dni, cargo, estado, proceso })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Candidato actualizado correctamente.");
+                    hideEditCandidateModal();
+                    fetchCandidatos();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                console.error("Error editando candidato:", err);
+            }
+        }
+    </script>
 
     <script>
         const API_URL = "https://sistema-de-votacion-gjzq.onrender.com/api/candidato";
@@ -240,31 +375,34 @@
         // Renderizar cards de candidatos
         // ---------------------------
         function renderCandidateCards() {
-            const container = document.getElementById('candidate-cards-container');
-            if (!container) return;
+        const container = document.getElementById('candidate-cards-container');
+        if (!container) return;
 
-            let html = '';
-            candidates.forEach(candidate => {
-                html += `
-                <div class="bg-candidate-card-bg p-6 rounded-xl shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg hover:bg-white border border-transparent hover:border-blue-300">
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 bg-candidate-circle-bg rounded-full flex items-center justify-center mb-4 overflow-hidden">
-                        <img src="${candidate.img}" alt="Avatar" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/150x150/d8e2ee/355b63?text=N/A';" />
-                    </div>
-                    <h3 class="text-xl font-semibold text-main-title mb-1">${candidate.name}</h3>
-                    ${candidate.estado === 'activo' 
-                        ? `<p class="text-xs text-gray-500 italic truncate w-full px-2" title="${candidate.currentProcess}">
-                            Proceso: ${candidate.currentProcess}
-                        </p>`
-                        : ''
-                    }
-                    <button onclick="showCandidateModal('${candidate.id}')" class="mt-4 text-custom-dark-button hover:text-blue-600 font-medium text-sm focus:outline-none">
+        let html = '';
+        candidates.forEach(candidate => {
+            html += `
+            <div class="bg-candidate-card-bg p-6 rounded-xl shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg hover:bg-white border border-transparent hover:border-blue-300">
+                <div class="w-24 h-24 sm:w-32 sm:h-32 bg-candidate-circle-bg rounded-full flex items-center justify-center mb-4 overflow-hidden">
+                    <img src="${candidate.img}" alt="Avatar" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/150x150/d8e2ee/355b63?text=N/A';" />
+                </div>
+                <h3 class="text-xl font-semibold text-main-title mb-1">${candidate.name}</h3>
+                ${candidate.estado === 'activo' 
+                    ? `<p class="text-xs text-gray-500 italic truncate w-full px-2" title="${candidate.currentProcess}">
+                        Proceso: ${candidate.currentProcess}
+                    </p>`
+                    : ''
+                }
+                <div class="flex space-x-2 mt-4">
+                    <button onclick="showCandidateModal('${candidate.id}')" class="text-custom-dark-button hover:text-blue-600 font-medium text-sm focus:outline-none">
                         Ver Perfil <i class="fas fa-arrow-right ml-1 text-xs"></i>
                     </button>
-                </div>`;
-            });
+                </div>
+            </div>`;
+        });
 
-            container.innerHTML = html;
-        }
+        container.innerHTML = html;
+    }
+
 
         // ---------------------------
         // Mostrar modal de candidato
@@ -275,20 +413,30 @@
             const modal = document.getElementById('candidate-modal');
             if (!candidate || !modal) return;
 
-            document.getElementById('modal-candidate-name').textContent = candidate.name;
+            // Guardar el _id real en el input oculto
+            document.getElementById('modal-candidate-hidden-id').value = candidate.id;
+
             document.getElementById('modal-candidate-img').src = candidate.img;
-            document.getElementById('modal-candidate-id').textContent = candidate.id;
+            document.getElementById('modal-candidate-name').textContent = candidate.name;
+            document.getElementById('modal-candidate-id').textContent = candidate.dni;
             document.getElementById('modal-candidate-cargo').textContent = candidate.cargo;
             document.getElementById('modal-candidate-estado').textContent = candidate.estado;
 
+            const processWrapper = document.getElementById('modal-candidate-process-wrapper');
             const processElement = document.getElementById('modal-candidate-process');
             if (candidate.estado === 'activo') {
                 processElement.textContent = candidate.currentProcess;
-                processElement.parentElement.classList.remove('hidden');
+                processWrapper.classList.remove('hidden');
             } else {
                 processElement.textContent = '';
-                processElement.parentElement.classList.add('hidden');
+                processWrapper.classList.add('hidden');
             }
+
+            // 🔹 Actualizar botones dinámicamente
+            const editBtn = modal.querySelector('.bg-edit-btn');
+            const deleteBtn = modal.querySelector('.bg-delete-btn');
+            editBtn.setAttribute('onclick', 'showEditFromDetailsModal()');
+            deleteBtn.setAttribute('onclick', `eliminarCandidatoModal('${candidate.id}')`);
 
             const estadoElement = document.getElementById('modal-candidate-estado');
             estadoElement.className = 'font-bold';
@@ -301,6 +449,7 @@
             modal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
+
 
         function hideCandidateModal() {
             document.getElementById('candidate-modal').classList.add('hidden');
@@ -334,12 +483,19 @@
             try {
                 const res = await fetch(API_PROCESOS);
                 procesos = await res.json();
-                const select = document.getElementById("new-proceso");
-                select.innerHTML = procesos.map(p => `<option value="${p._id}">${p.nombre}</option>`).join('');
+
+                const wrapper = document.getElementById("new-proceso-checkboxes");
+                wrapper.innerHTML = procesos.map(p => `
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="${p._id}" class="proceso-checkbox">
+                        <span>${p.nombre}</span>
+                    </label>
+                `).join('');
             } catch (err) {
                 console.error("Error cargando procesos:", err);
             }
         }
+
 
         // ---------------------------
         // Controlar visibilidad de select según estado
@@ -364,7 +520,19 @@
             const estado = document.getElementById('new-estado').value;
 
             // Enviar null si está inactivo
-            const proceso = estado === 'inactivo' ? null : document.getElementById('new-proceso').value;
+            let procesosSeleccionados = [];
+
+            // Si está activo, obtener los checks marcados
+            if (estado !== 'inactivo') {
+                procesosSeleccionados = Array.from(
+                    document.querySelectorAll('.proceso-checkbox:checked')
+                ).map(cb => cb.value);
+
+                if (procesosSeleccionados.length === 0) {
+                    alert("Selecciona al menos un proceso.");
+                    return;
+                }
+            }
 
             let foto = document.getElementById('new-foto-url').value;
             const fileInput = document.getElementById('new-foto-file');
@@ -400,7 +568,7 @@
                     document.getElementById('new-id').value = '';
                     document.getElementById('new-cargo').value = '';
                     document.getElementById('new-estado').value = 'activo';
-                    document.getElementById('new-proceso').value = procesos[0]?._id || '';
+                    document.querySelectorAll('.proceso-checkbox').forEach(cb => cb.checked = false);
                     document.getElementById('new-foto-url').value = '';
                     document.getElementById('new-foto-file').value = '';
                     controlarProcesoVisibility();
@@ -413,6 +581,34 @@
                 console.error("Error creando candidato:", err);
             }
         }
+
+        // ---------------------------
+        // Acciones de candidato (editar / eliminar)
+        // ---------------------------
+        async function eliminarCandidatoModal(candidateId) {
+            if (!confirm("¿Seguro que deseas eliminar este candidato?")) return;
+
+            try {
+                const res = await fetch(`${API_URL}/${candidateId}`, { method: "DELETE" });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Candidato eliminado correctamente.");
+                    hideCandidateModal();
+                    fetchCandidatos();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                console.error("Error eliminando candidato:", err);
+            }
+        }
+
+        function showEditFromDetailsModal() {
+            const candidateId = document.getElementById('modal-candidate-hidden-id').value;
+            hideCandidateModal();
+            showEditCandidateModal(candidateId);
+        }
+
 
         // ---------------------------
         // Inicialización

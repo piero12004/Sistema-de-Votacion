@@ -6,9 +6,13 @@ const candidatoSchema = new mongoose.Schema({
   cargo: { type: String, required: true },
   estado: { type: String, enum: ["activo", "inactivo"], default: "activo" },
   foto: { type: String },
-  proceso: { type: mongoose.Schema.Types.ObjectId, ref: "ProcesoElectoral", required: function() {
-    return this.estado === "activo";
-  }}
+  procesos: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProcesoElectoral" }],
+    required: function() {
+      return this.estado === "activo";
+    },
+    default: []
+  }
 });
 
 export default mongoose.model("Candidato", candidatoSchema);
