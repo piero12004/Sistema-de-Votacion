@@ -109,14 +109,22 @@
                     Crear Nuevo Proceso
                 </button>
 
-                <div class="relative w-full md:w-72">
+                <div class="relative w-full md:w-72 mb-4 flex gap-2">
+                    <!-- Input para filtrar por nombre -->
                     <input 
                         type="text" 
-                        placeholder="Filtrar"
+                        id="filtroNombre"
+                        placeholder="Buscar por nombre..."
                         class="w-full py-2 px-4 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-dark-button">
-                    <button class="absolute right-0 top-0 mt-3 mr-3 text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times-circle"></i>
-                    </button>
+
+                    <!-- Select para filtrar por estado -->
+                    <select id="filtroEstado" class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-dark-button">
+                        <option value="">Todos los estados</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Terminado">Terminado</option>
+                        <option value="Observacion">En observación</option>
+                    </select>
                 </div>
             </div>
 
@@ -139,26 +147,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-6 h-fit">
-                    <div class="relative mb-4">
-                        <input 
-                            type="text" 
-                            placeholder="Filtrar"
-                            class="w-full py-2 px-4 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-dark-button"
-                        >
-                        <button class="absolute right-0 top-0 mt-3 mr-3 text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times-circle"></i>
-                        </button>
-                    </div>
-
-                    <ul class="space-y-1 text-sm font-medium">
-                        <li class="p-3 rounded-lg bg-active-filter-bg text-gray-900 cursor-pointer">Todos</li>
-                        <li class="p-3 rounded-lg hover:bg-gray-100 cursor-pointer text-gray-700">Activos</li>
-                        <li class="p-3 rounded-lg hover:bg-gray-100 cursor-pointer text-gray-700">Pendientes</li>
-                        <li class="p-3 rounded-lg hover:bg-gray-100 cursor-pointer text-gray-700">Terminados</li>
-                        <li class="p-3 rounded-lg hover:bg-gray-100 cursor-pointer text-gray-700">En observación</li>
-                    </ul>
-                </div>
+                
                 
                 <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-xl font-bold text-main-title border-b pb-2 mb-4">
@@ -516,48 +505,67 @@
 
     <script>
         const API_URL = "https://sistema-de-votacion-gjzq.onrender.com/api/proceso";
+        let procesosGlobal = [];
 
         async function cargarProcesos() {
             try {
                 const res = await fetch(API_URL);
                 const procesos = await res.json();
 
-                const tbody = document.getElementById("tabla-procesos");
-                tbody.innerHTML = ""; // limpiar
-
-                procesos.forEach(p => {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">${p.nombre}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">${p._id}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${p.tipo}</td>
-
-                            <td class="px-6 py-4 whitespace-nowrap ${
-                                p.estado === "Activo"
-                                    ? "text-green-600"
-                                    : p.estado === "Pendiente"
-                                    ? "text-yellow-600"
-                                    : "text-blue-600"
-                            } font-semibold">
-                                ${p.estado}
-                            </td>
-
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                ${p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-"}
-                            </td>
-
-                            <td class="px-6 py-4 whitespace-nowrap">${p.progreso}%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
-                        </tr>
-                    `;
-                });
-
+                procesosGlobal = procesos; // guardamos todos los procesos
+                renderizarProcesos(procesosGlobal);
             } catch (err) {
                 console.error("Error cargando procesos:", err);
             }
         }
 
-        // Llamar al cargar la página
+        function renderizarProcesos(procesos) {
+            const tbody = document.getElementById("tabla-procesos");
+            tbody.innerHTML = "";
+
+            procesos.forEach(p => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-6 py-4 whitespace-nowrap">${p.nombre}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">${p._id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${p.tipo}</td>
+                        <td class="px-6 py-4 whitespace-nowrap ${
+                            p.estado === "Activo"
+                                ? "text-green-600"
+                                : p.estado === "Pendiente"
+                                ? "text-yellow-600"
+                                : p.estado === "Terminado"
+                                ? "text-gray-600"
+                                : "text-blue-600"
+                        } font-semibold">${p.estado}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-"}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">${p.progreso}%</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Filtrar al escribir o cambiar estado
+        document.getElementById("filtroNombre").addEventListener("input", filtrarProcesos);
+        document.getElementById("filtroEstado").addEventListener("change", filtrarProcesos);
+
+        function filtrarProcesos() {
+            const nombre = document.getElementById("filtroNombre").value.toLowerCase();
+            const estado = document.getElementById("filtroEstado").value;
+
+            const filtrados = procesosGlobal.filter(p => {
+                const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+                const coincideEstado = estado ? p.estado === estado : true;
+                return coincideNombre && coincideEstado;
+            });
+
+            renderizarProcesos(filtrados);
+        }
+
+        // Llamada inicial
         cargarProcesos();
     </script>
 
