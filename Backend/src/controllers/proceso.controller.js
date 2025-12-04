@@ -21,15 +21,33 @@ export const obtenerProcesos = async (req, res) => {
     const procesos = await ProcesoElectoral.find();
     const hoy = new Date();
 
-    // Actualizar los que ya terminaron
+    const procesosActualizados = [];
+
     for (let p of procesos) {
-      if (p.estado !== "Terminado" && p.fechaFin && new Date(p.fechaFin) < hoy) {
-        p.estado = "Terminado";
-        await p.save(); // guardar cambio en la base de datos
+      let progreso = 0;
+
+      // Determinar el estado según la fecha
+      if (p.fechaInicio && p.fechaFin) {
+        if (hoy < p.fechaInicio) {
+          p.estado = "Pendiente"; // aún no inicia
+          progreso = 0;
+        } else if (hoy >= p.fechaInicio && hoy <= p.fechaFin) {
+          p.estado = "Activo"; // en curso
+          progreso = Math.round(((hoy - p.fechaInicio) / (p.fechaFin - p.fechaInicio)) * 100);
+        } else if (hoy > p.fechaFin) {
+          p.estado = "Terminado"; // ya pasó la fecha de fin
+          progreso = 100;
+        }
       }
+
+      // Solo guardar si hubo un cambio de estado
+      if (p.isModified()) await p.save();
+
+      // Añadir el progreso calculado al objeto que se enviará
+      procesosActualizados.push({ ...p.toObject(), progreso });
     }
 
-    res.json(procesos);
+    res.json(procesosActualizados);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

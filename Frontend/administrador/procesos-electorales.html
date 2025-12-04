@@ -154,34 +154,38 @@
                         Proceso Seleccionado
                     </h3>
 
-                    <dl class="space-y-2 text-gray-700">
+                    <dl id="procesoSeleccionado" class="space-y-2 text-gray-700">
                         <div class="flex">
                             <dt class="font-semibold w-1/4">Nombre del Proceso:</dt>
-                            <dd class="w-3/4">Elecciones Centro de Estudiantes</dd>
+                            <dd class="w-3/4" id="ps-nombre">-</dd>
                         </div>
                         <div class="flex">
                             <dt class="font-semibold w-1/4">ID:</dt>
-                            <dd class="w-3/4">111222333</dd>
+                            <dd class="w-3/4" id="ps-id">-</dd>
                         </div>
                         <div class="flex">
                             <dt class="font-semibold w-1/4">Tipo:</dt>
-                            <dd class="w-3/4">Presencial</dd>
+                            <dd class="w-3/4" id="ps-tipo">-</dd>
                         </div>
                         <div class="flex">
                             <dt class="font-semibold w-1/4">Estado:</dt>
-                            <dd class="w-3/4 text-green-600 font-semibold">Activo</dd>
+                            <dd class="w-3/4 font-semibold" id="ps-estado">-</dd>
                         </div>
                         <div class="flex">
-                            <dt class="font-semibold w-1/4">Fecha:</dt>
-                            <dd class="w-3/4">20/11/2025</dd>
+                            <dt class="font-semibold w-1/4">Fecha de Inicio:</dt>
+                            <dd class="w-3/4" id="ps-fechaInicio">-</dd>
+                        </div>
+                        <div class="flex">
+                            <dt class="font-semibold w-1/4">Fecha de Fin:</dt>
+                            <dd class="w-3/4" id="ps-fechaFin">-</dd>
                         </div>
                         <div class="flex">
                             <dt class="font-semibold w-1/4">Avance (%):</dt>
-                            <dd class="w-3/4">55%</dd>
+                            <dd class="w-3/4" id="ps-progreso">-</dd>
                         </div>
                         <div class="flex">
                             <dt class="font-semibold w-1/4">Votos:</dt>
-                            <dd class="w-3/4">1250</dd>
+                            <dd class="w-3/4" id="ps-votos">-</dd>
                         </div>
                     </dl>
                     
@@ -511,61 +515,69 @@
             try {
                 const res = await fetch(API_URL);
                 const procesos = await res.json();
-
-                procesosGlobal = procesos; // guardamos todos los procesos
-                renderizarProcesos(procesosGlobal);
+                procesosGlobal = procesos;
+                renderizarTabla(procesosGlobal);
             } catch (err) {
                 console.error("Error cargando procesos:", err);
             }
         }
 
-        function renderizarProcesos(procesos) {
+        function renderizarTabla(procesos) {
             const tbody = document.getElementById("tabla-procesos");
             tbody.innerHTML = "";
 
             procesos.forEach(p => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 cursor-pointer">
-                        <td class="px-6 py-4 whitespace-nowrap">${p.nombre}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">${p._id}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${p.tipo}</td>
-                        <td class="px-6 py-4 whitespace-nowrap ${
-                            p.estado === "Activo"
-                                ? "text-green-600"
-                                : p.estado === "Pendiente"
-                                ? "text-yellow-600"
-                                : p.estado === "Terminado"
-                                ? "text-gray-600"
-                                : "text-blue-600"
-                        } font-semibold">${p.estado}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            ${p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-"}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">${p.progreso}%</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
-                    </tr>
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50 cursor-pointer";
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${p.nombre}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${p._id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${p.tipo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap ${
+                        p.estado === "Activo"
+                            ? "text-green-600"
+                            : p.estado === "Pendiente"
+                            ? "text-yellow-600"
+                            : p.estado === "Terminado"
+                            ? "text-gray-600"
+                            : "text-blue-600"
+                    } font-semibold">${p.estado}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-"}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${p.progreso}%</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
                 `;
+
+                // Evento click para mostrar el proceso completo en el panel
+                tr.addEventListener("click", () => mostrarProcesoSeleccionado(p));
+
+                tbody.appendChild(tr);
             });
         }
 
-        // Filtrar al escribir o cambiar estado
-        document.getElementById("filtroNombre").addEventListener("input", filtrarProcesos);
-        document.getElementById("filtroEstado").addEventListener("change", filtrarProcesos);
+        function mostrarProcesoSeleccionado(p) {
+            document.getElementById("ps-nombre").textContent = p.nombre;
+            document.getElementById("ps-id").textContent = p._id;
+            document.getElementById("ps-tipo").textContent = p.tipo;
 
-        function filtrarProcesos() {
-            const nombre = document.getElementById("filtroNombre").value.toLowerCase();
-            const estado = document.getElementById("filtroEstado").value;
+            const estadoDD = document.getElementById("ps-estado");
+            estadoDD.textContent = p.estado;
+            estadoDD.className = "w-3/4 font-semibold " + 
+                (p.estado === "Activo"
+                    ? "text-green-600"
+                    : p.estado === "Pendiente"
+                    ? "text-yellow-600"
+                    : p.estado === "Terminado"
+                    ? "text-gray-600"
+                    : "text-blue-600");
 
-            const filtrados = procesosGlobal.filter(p => {
-                const coincideNombre = p.nombre.toLowerCase().includes(nombre);
-                const coincideEstado = estado ? p.estado === estado : true;
-                return coincideNombre && coincideEstado;
-            });
-
-            renderizarProcesos(filtrados);
+            document.getElementById("ps-fechaInicio").textContent = p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-";
+            document.getElementById("ps-fechaFin").textContent = p.fechaFin ? new Date(p.fechaFin).toLocaleDateString("es-PE") : "-";
+            document.getElementById("ps-progreso").textContent = p.progreso + "%";
+            document.getElementById("ps-votos").textContent = p.totalVotos;
         }
 
-        // Llamada inicial
+        // Inicializar tabla al cargar la página
         cargarProcesos();
     </script>
 
