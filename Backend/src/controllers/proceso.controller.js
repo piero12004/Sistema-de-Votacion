@@ -20,68 +20,61 @@ export const obtenerProcesos = async (req, res) => {
     try {
         const procesos = await ProcesoElectoral.find();
 
-        // 1. Obtener la fecha de HOY a medianoche en UTC para comparación
+        // Obtener la fecha de HOY a medianoche en UTC para comparación
         const hoy = new Date();
         const hoySoloFecha = new Date(Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()));
 
         const procesosActualizados = [];
 
         for (let p of procesos) {
-            let progreso = 0;
+            let progreso = p.progreso ?? 0;
             let estadoNuevo = p.estado;
 
-            if (p.fechaInicio && p.fechaFin) {
-                // 2. Extraer fechas de inicio/fin usando métodos UTC
-                // Esto garantiza que la fecha sea la misma sin importar la zona horaria del servidor.
+            // Solo recalcular si el estado NO es Observacion o Rechazado
+            if (!["Observacion", "Rechazado"].includes(p.estado) && p.fechaInicio && p.fechaFin) {
                 const inicio = new Date(Date.UTC(
                     p.fechaInicio.getUTCFullYear(),
                     p.fechaInicio.getUTCMonth(),
                     p.fechaInicio.getUTCDate()
                 ));
-                
+
                 const fin = new Date(Date.UTC(
                     p.fechaFin.getUTCFullYear(),
                     p.fechaFin.getUTCMonth(),
                     p.fechaFin.getUTCDate()
                 ));
 
-                // Lógica de Estado
+                // Lógica de Estado automática
                 if (hoySoloFecha < inicio) {
                     estadoNuevo = "Pendiente";
                     progreso = 0;
                 } else if (hoySoloFecha >= inicio && hoySoloFecha <= fin) {
                     estadoNuevo = "Activo";
                     
-                    // Cálculo de progreso
                     const totalDuration = fin.getTime() - inicio.getTime();
                     const elapsedDuration = hoySoloFecha.getTime() - inicio.getTime();
                     
                     if (totalDuration > 0) {
                         progreso = Math.round((elapsedDuration / totalDuration) * 100);
-                        // Asegurar que el progreso no exceda el 100%
                         if (progreso > 100) progreso = 100; 
                     } else {
-                        // En caso de que inicio y fin sean el mismo día o haya un error, 
-                        // si está activo, se asume 100% de progreso.
                         progreso = 100; 
                     }
-
                 } else if (hoySoloFecha > fin) {
                     estadoNuevo = "Terminado";
                     progreso = 100;
                 }
             }
-            
-            // Guardar el estado y progreso en la BD si han cambiado
-            // Nota: Mongoose solo guarda si hay un cambio real.
+
+            // Guardar cambios solo si hubo modificación
             if (estadoNuevo !== p.estado || progreso !== p.progreso) {
                 p.estado = estadoNuevo;
                 p.progreso = progreso;
                 await p.save();
             }
 
-            // Devolver el objeto actualizado al frontend
-            procesosActualizados.push({ ...p.toObject(), progreso: p.progreso });
+            // Devolver objeto actualizado al frontend
+            procesosActualizados.push({ ...p.toObject(), progreso });
         }
 
         res.json(procesosActualizados);

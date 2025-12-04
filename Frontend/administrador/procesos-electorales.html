@@ -321,35 +321,46 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="date_edit" class="block text-sm font-medium text-gray-700">Fecha:</label>
-                    <input type="text" id="date_edit" name="date" value="20/11/2025" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-custom-dark-button focus:border-custom-dark-button" required>
+                    <label class="block text-sm font-medium text-gray-700">Fecha de Inicio:</label>
+                    <input type="date" id="fechaInicio_edit" name="fechaInicio" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-custom-dark-button focus:border-custom-dark-button" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Fecha de Fin:</label>
+                    <input type="date" id="fechaFin_edit" name="fechaFin" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-custom-dark-button focus:border-custom-dark-button" required>
                 </div>
                 
                 <div class="mb-8">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Estado:</label>
                     <div class="flex space-x-2 justify-start flex-wrap gap-y-2">
                         <div class="flex items-center">
-                            <input type="radio" id="status_approved_e" name="status_edit" value="aprobado" class="hidden peer" checked>
-                            <label for="status_approved_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-aprobado hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-aprobado peer-checked:ring-offset-2">
-                                Aprobado
+                            <input type="radio" id="status_activo_e" name="status_edit" value="Activo" class="hidden peer">
+                            <label for="status_activo_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-green-600 hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-green-600 peer-checked:ring-offset-2">
+                                Activo
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="radio" id="status_review_e" name="status_edit" value="revision" class="hidden peer">
-                            <label for="status_review_e" class="px-3 py-1.5 text-gray-800 text-xs font-bold rounded-lg cursor-pointer bg-revision hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-revision peer-checked:ring-offset-2">
-                                En Revisión
+                            <input type="radio" id="status_pendiente_e" name="status_edit" value="Pendiente" class="hidden peer">
+                            <label for="status_pendiente_e" class="px-3 py-1.5 text-gray-800 text-xs font-bold rounded-lg cursor-pointer bg-yellow-600 hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-yellow-600 peer-checked:ring-offset-2">
+                                Pendiente
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="radio" id="status_rejected_e" name="status_edit" value="rechazado" class="hidden peer">
-                            <label for="status_rejected_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-rechazado hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-rechazado peer-checked:ring-offset-2">
+                            <input type="radio" id="status_terminado_e" name="status_edit" value="Terminado" class="hidden peer">
+                            <label for="status_terminado_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-gray-600 hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-gray-600 peer-checked:ring-offset-2">
+                                Terminado
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="status_observacion_e" name="status_edit" value="Observacion" class="hidden peer">
+                            <label for="status_observacion_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-blue-600 hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-blue-600 peer-checked:ring-offset-2">
+                                En Observación
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="status_rechazado_e" name="status_edit" value="Rechazado" class="hidden peer">
+                            <label for="status_rechazado_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-red-600 hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-red-600 peer-checked:ring-offset-2">
                                 Rechazado
-                            </label>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="radio" id="status_observacion_e" name="status_edit" value="observacion" class="hidden peer">
-                            <label for="status_observacion_e" class="px-3 py-1.5 text-white text-xs font-bold rounded-lg cursor-pointer bg-observacion hover:opacity-90 transition duration-150 peer-checked:ring-2 peer-checked:ring-observacion peer-checked:ring-offset-2">
-                                En observación
                             </label>
                         </div>
                     </div>
@@ -510,7 +521,9 @@
     <script>
         const API_URL = "https://sistema-de-votacion-gjzq.onrender.com/api/proceso";
         let procesosGlobal = [];
+        let procesoSeleccionado = null;
 
+        // --- CARGAR PROCESOS ---
         async function cargarProcesos() {
             try {
                 const res = await fetch(API_URL);
@@ -522,6 +535,7 @@
             }
         }
 
+        // --- RENDER TABLA ---
         function renderizarTabla(procesos) {
             const tbody = document.getElementById("tabla-procesos");
             tbody.innerHTML = "";
@@ -548,38 +562,156 @@
                     <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
                 `;
 
-                // Evento click para mostrar el proceso completo en el panel
                 tr.addEventListener("click", () => mostrarProcesoSeleccionado(p));
-
                 tbody.appendChild(tr);
             });
         }
 
+        // --- MOSTRAR PROCESO SELECCIONADO ---
         function mostrarProcesoSeleccionado(p) {
+            procesoSeleccionado = p;
+
+            // Nombre, ID y tipo
             document.getElementById("ps-nombre").textContent = p.nombre;
             document.getElementById("ps-id").textContent = p._id;
             document.getElementById("ps-tipo").textContent = p.tipo;
 
+            // Estado con colores
             const estadoDD = document.getElementById("ps-estado");
             estadoDD.textContent = p.estado;
-            estadoDD.className = "w-3/4 font-semibold " + 
+            estadoDD.className = "w-3/4 font-semibold " +
                 (p.estado === "Activo"
                     ? "text-green-600"
                     : p.estado === "Pendiente"
                     ? "text-yellow-600"
                     : p.estado === "Terminado"
                     ? "text-gray-600"
-                    : "text-blue-600");
+                    : p.estado === "Observacion"
+                    ? "text-blue-600"
+                    : p.estado === "Rechazado"
+                    ? "text-red-600"
+                    : "");
 
-            document.getElementById("ps-fechaInicio").textContent = p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-";
-            document.getElementById("ps-fechaFin").textContent = p.fechaFin ? new Date(p.fechaFin).toLocaleDateString("es-PE") : "-";
-            document.getElementById("ps-progreso").textContent = p.progreso + "%";
-            document.getElementById("ps-votos").textContent = p.totalVotos;
+            // Fechas
+            document.getElementById("ps-fechaInicio").textContent = p.fechaInicio
+                ? new Date(p.fechaInicio).toLocaleDateString("es-PE")
+                : "-";
+            document.getElementById("ps-fechaFin").textContent = p.fechaFin
+                ? new Date(p.fechaFin).toLocaleDateString("es-PE")
+                : "-";
+
+            // Progreso y votos
+            document.getElementById("ps-progreso").textContent = p.progreso != null ? p.progreso + "%" : "-";
+            document.getElementById("ps-votos").textContent = p.totalVotos != null ? p.totalVotos : "-";
         }
+
+
+        // --- FILTROS ---
+        const filtroNombre = document.getElementById("filtroNombre");
+        const filtroEstado = document.getElementById("filtroEstado");
+
+        function aplicarFiltros() {
+            const nombre = filtroNombre.value.toLowerCase();
+            const estado = filtroEstado.value;
+
+            const filtrados = procesosGlobal.filter(p => {
+                const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+                const coincideEstado = estado ? p.estado === estado : true;
+                return coincideNombre && coincideEstado;
+            });
+
+            renderizarTabla(filtrados);
+        }
+
+        filtroNombre.addEventListener("input", aplicarFiltros);
+        filtroEstado.addEventListener("change", aplicarFiltros);
+
+        // --- MODAL EDITAR ---
+        const editModal = document.getElementById("edit-modal");
+        const nameEdit = document.getElementById("name_edit");
+        const typeEdit = document.getElementById("type_edit");
+        const dateEdit = document.getElementById("date_edit");
+
+        function openEditModal() {
+            if (!procesoSeleccionado) return alert("Selecciona un proceso primero.");
+
+            nameEdit.value = procesoSeleccionado.nombre;
+            typeEdit.value = procesoSeleccionado.tipo;
+            if (procesoSeleccionado.fechaInicio) {
+                document.getElementById("fechaInicio_edit").value = new Date(procesoSeleccionado.fechaInicio).toISOString().split("T")[0];
+            }
+            if (procesoSeleccionado.fechaFin) {
+                document.getElementById("fechaFin_edit").value = new Date(procesoSeleccionado.fechaFin).toISOString().split("T")[0];
+            }
+
+            const radios = document.querySelectorAll('input[name="status_edit"]');
+            radios.forEach(r => r.checked = r.value.toLowerCase() === procesoSeleccionado.estado.toLowerCase());
+
+            editModal.classList.remove("hidden");
+        }
+
+        function closeEditModal() {
+            editModal.classList.add("hidden");
+        }
+
+        async function handleEdit(event) {
+            event.preventDefault();
+            if (!procesoSeleccionado) return;
+
+            const nombre = nameEdit.value;
+            const tipo = typeEdit.value;
+            const estadoRadio = document.querySelector('input[name="status_edit"]:checked');
+            const estado = estadoRadio ? estadoRadio.value : procesoSeleccionado.estado;
+
+            const fechaInicio = document.getElementById("fechaInicio_edit").value ? new Date(document.getElementById("fechaInicio_edit").value) : null;
+            const fechaFin = document.getElementById("fechaFin_edit").value ? new Date(document.getElementById("fechaFin_edit").value) : null;
+
+
+            try {
+                const res = await fetch(`${API_URL}/${procesoSeleccionado._id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nombre, tipo, estado, fechaInicio, fechaFin })
+                });
+                if (!res.ok) throw new Error("Error al actualizar el proceso");
+
+                const data = await res.json();
+                alert(data.message);
+                closeEditModal();
+                cargarProcesos();
+            } catch (err) {
+                console.error(err);
+                alert("No se pudo actualizar el proceso.");
+            }
+        }
+
+        // --- ELIMINAR ---
+        async function eliminarProceso() {
+            if (!procesoSeleccionado) return alert("Selecciona un proceso primero.");
+            if (!confirm(`¿Deseas eliminar el proceso "${procesoSeleccionado.nombre}"?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/${procesoSeleccionado._id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error("Error al eliminar el proceso");
+
+                const data = await res.json();
+                alert(data.message);
+                procesoSeleccionado = null;
+                cargarProcesos();
+            } catch (err) {
+                console.error(err);
+                alert("No se pudo eliminar el proceso.");
+            }
+        }
+
+        // --- BOTONES DEL PANEL ---
+        document.querySelector("button[onclick='openEditModal()']").addEventListener("click", openEditModal);
+        document.querySelector("button.bg-red-600").addEventListener("click", eliminarProceso);
 
         // Inicializar tabla al cargar la página
         cargarProcesos();
     </script>
+
 
     <script type="module">
         import { cargarNombreAdmin } from "./js/admin.js";
