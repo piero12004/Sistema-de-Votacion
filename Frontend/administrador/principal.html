@@ -19,7 +19,7 @@
                     <div class="p-2 rounded-full bg-white text-sidebar-bg">
                         <i class="fas fa-user text-xl"></i>
                     </div>
-                    <span class="text-xl font-semibold">Usuario</span>
+                    <span id="nombreAdmin" class="text-xl font-semibold">Usuario</span>
                 </div>
 
                 <nav class="space-y-3">
@@ -65,8 +65,8 @@
         <!-- CONTENIDO -->
         <main class="flex-1 p-8 md:p-12 ml-sidebar-width">
             <div class="mb-10 text-center">
-                <h1 class="text-3xl font-serif text-main-title">
-                    Bienvenido [Nombre de Usuario]
+                <h1 id="tituloAdmin" class="text-3xl font-serif text-main-title">
+                    Bienvenido
                 </h1>
             </div>
 
@@ -209,183 +209,227 @@
 </script>
 
 <script>
-    const token = localStorage.getItem("tokenAdmin"); // Necesario para la autorización
+    document.addEventListener("DOMContentLoaded", () => {
+        // =============================
+        //  TOKEN 
+        // =============================
+        const token = localStorage.getItem("tokenAdmin");
 
-    async function cargarProcesos() {
-        const contenedor = document.getElementById("contenedorProcesos");
-        contenedor.innerHTML = '<p class="text-center text-gray-500">Cargando procesos...</p>'; // Mensaje de carga
+        // =============================
+        // 1. FUNCIÓN GET PARA CARGAR PROCESOS
+        // =============================
+        async function cargarProcesos() {
+            const contenedor = document.getElementById("contenedorProcesos");
+            if (!contenedor) return; // Si esta página no tiene procesos, no hacemos nada
 
-        try {
-            // Usaremos la ruta GET /api/proceso (que usa obtenerProcesos del controlador)
-            const res = await fetch("http://localhost:3000/api/proceso", { 
-                headers: { "Authorization": `Bearer ${token}` }
+            contenedor.innerHTML = `<p class="text-center text-gray-500">Cargando procesos...</p>`;
+
+            try {
+                const res = await fetch("https://sistema-de-votacion-gjzq.onrender.com/api/proceso", {
+                    headers: {
+                        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+                    }
+                });
+
+                if (!res.ok) throw new Error("No se pudieron obtener los procesos");
+
+                const procesos = await res.json();
+
+                if (procesos.length === 0) {
+                    contenedor.innerHTML = `<p class="text-center text-gray-500 mt-4">No hay procesos electorales registrados.</p>`;
+                    return;
+                }
+
+                contenedor.innerHTML = procesos.map(p => {
+                    const fechaInicio = new Date(p.fechaInicio).toLocaleDateString();
+                    const fechaFin = new Date(p.fechaFin).toLocaleDateString();
+
+                    let estadoClase = "bg-gray-400";
+                    if (p.estado === "Activo") estadoClase = "bg-green-500";
+                    if (p.estado === "Pendiente") estadoClase = "bg-yellow-500";
+                    if (p.estado === "Observacion") estadoClase = "bg-red-500";
+
+                    return `
+                        <div class="bg-white rounded-lg shadow border p-3">
+                            <div class="relative">
+                                <span class="absolute top-2 right-2 text-xs text-white px-2 py-1 rounded ${estadoClase}">
+                                    ${p.estado}
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-semibold">${p.nombre}</h3>
+                            <p class="text-sm">${p.tipo}</p>
+                            <p class="text-sm mt-1"><strong>Inicio:</strong> ${fechaInicio}</p>
+                            <p class="text-sm"><strong>Fin:</strong> ${fechaFin}</p>
+                        </div>
+                    `;
+                }).join("");
+
+            } catch (err) {
+                console.error(err);
+                contenedor.innerHTML = `<p class="text-center text-red-500">Error al cargar procesos</p>`;
+            }
+        }
+
+        // Llamar GET al cargar página
+        cargarProcesos();
+    
+        // =============================
+        // 2. DETECTAR QUÉ MODAL EXISTE
+        // =============================
+
+        const modal1 = document.getElementById("modalProceso"); // principal.html
+        const modal2 = document.getElementById("creation-modal"); // procesos-electorales.html
+
+        let modal, modalContent, form;
+
+        if (modal1) {
+            // --- Modal de principal.html ---
+            modal = modal1;
+            modalContent = document.getElementById("modalContenido");
+            form = document.getElementById("formProceso");
+
+            // Abrir modal
+            const btnAbrir = document.getElementById("btnAbrirModal");
+            btnAbrir?.addEventListener("click", () => {
+                modal.classList.remove("hidden");
+                setTimeout(() => modalContent.classList.remove("opacity-0", "scale-90"), 10);
             });
 
-            if (!res.ok) {
-                // Si la respuesta no es 200 (ej: 401 Unauthorized o 500 Server Error)
-                throw new Error("Error al obtener la lista de procesos.");
-            }
+            // Cerrar
+            document.getElementById("btnCerrarModal")?.addEventListener("click", () => {
+                modalContent.classList.add("opacity-0", "scale-90");
+                setTimeout(() => modal.classList.add("hidden"), 200);
+            });
 
-            const procesos = await res.json();
+        } else if (modal2) {
+            // --- Modal de procesos-electorales.html ---
+            modal = modal2;
+            modalContent = modal2.querySelector("div > div");
+            form = modal2.querySelector("form");
 
-            if (procesos.length === 0) {
-                contenedor.innerHTML = '<p class="text-center text-gray-500 mt-5">No hay procesos electorales registrados.</p>';
-                return;
-            }
-
-            // Generamos las tarjetas (cards) con los datos
-            contenedor.innerHTML = procesos.map(p => {
-                // Formateamos las fechas
-                const fechaInicio = new Date(p.fechaInicio).toLocaleDateString();
-                const fechaCierre = new Date(p.fechaCierre).toLocaleDateString();
-                
-                // Mapeo de estado a clase de Tailwind para el color
-                let estadoClase = 'bg-gray-400';
-                if (p.estado === 'Activo') estadoClase = 'bg-green-500';
-                else if (p.estado === 'Pendiente') estadoClase = 'bg-yellow-500';
-                else if (p.estado === 'Observacion') estadoClase = 'bg-red-500';
-
-                return `
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                        <div class="h-32 flex items-end p-4 relative" style="background-color: #98C1D9;">
-                            <span class="absolute top-2 right-2 text-xs font-bold px-3 py-1 rounded-full text-white ${estadoClase}">
-                                ${p.estado}
-                            </span>
-                            <div class="text-white">
-                                <h4 class="text-xl font-bold">${p.nombre}</h4>
-                                <p class="text-sm">${p.tipo}</p>
-                            </div>
-                        </div>
-                        <div class="p-3 text-sm text-gray-700">
-                            <p class="flex justify-between">
-                                <span><i class="fas fa-calendar-day mr-2"></i> Inicio:</span>
-                                <span>${fechaInicio}</span>
-                            </p>
-                            <p class="flex justify-between border-b pb-2 mb-2">
-                                <span><i class="fas fa-calendar-times mr-2"></i> Cierre:</span>
-                                <span>${fechaCierre}</span>
-                            </p>
-                            <div class="flex justify-between items-center pt-2">
-                                <span class="text-sm font-semibold text-blue-600">Votos: ${p.totalVotos || 0}</span>
-                                <a href="detalles-proceso.html?id=${p._id}" class="py-1 px-3 bg-blue-100 text-blue-600 font-semibold rounded-lg hover:bg-blue-200 transition">
-                                    Ver / Editar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join("");
-
-        } catch (e) {
-            console.error("Error al cargar procesos:", e);
-            contenedor.innerHTML = `<p class="text-red-600 text-center mt-5">❌ ${e.message}</p>`;
-        }
-    }
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // 1. VERIFICAR TOKEN (Seguridad)
-        const token = localStorage.getItem("tokenAdmin");
-        if (!token) {
-            window.location.href = "login.html";
-            return; 
+            window.openCreationModal = () => modal.classList.remove("hidden");
+            window.closeCreationModal = () => modal.classList.add("hidden");
         }
 
-        // 2. REFERENCIAS DOM
-        const modal = document.getElementById("modalProceso");
-        const modalContenido = document.getElementById("modalContenido");
-        const btnAbrir = document.getElementById("btnAbrirModal");
-        const btnCerrar = document.getElementById("btnCerrarModal");
-        const form = document.getElementById("formProceso");
-        
-        // Inputs del formulario
-        const nombreInput = document.getElementById("nombre");
-        const fechaInicioInput = document.getElementById("fechaInicio");
-        const fechaFinInput = document.getElementById("fechaFin"); // Ojo con este ID en el HTML
-        const estadoHiddenInput = document.getElementById("estado"); 
-        const btnsEstado = document.querySelectorAll(".estado-btn");
+        if (!form) return; // Si no hay modal, no hacemos nada
 
-        // 3. FUNCIONES DEL MODAL
-        const abrirModal = () => {
-            modal.classList.remove("hidden");
-            setTimeout(() => modalContenido.classList.remove("opacity-0", "scale-90"), 10);
+        // =============================
+        // 3. LEER CAMPOS (dependen de cada HTML)
+        // =============================
+
+        const getFields = () => {
+            if (modal1) {
+                // principal.html
+                return {
+                    nombre: document.getElementById("nombre").value,
+                    tipo: document.querySelector("input[name='tipo']:checked")?.value || "",
+                    estado: document.getElementById("estado").value,
+                    fechaInicio: document.getElementById("fechaInicio").value,
+                    fechaFin: document.getElementById("fechaFin").value,
+                };
+            } 
+
+            // procesos-electorales.html
+            return {
+                nombre: document.getElementById("name_create").value,
+                tipo: document.getElementById("type_create").value,
+                estado: document.querySelector("input[name='status_create']:checked").value,
+                fechaInicio: document.getElementById("start_date_create").value,
+                fechaFin: document.getElementById("end_date_create").value,
+            };
         };
 
-        const cerrarModal = () => {
-            modalContenido.classList.add("opacity-0", "scale-90");
-            setTimeout(() => {
-                modal.classList.add("hidden");
-                form.reset();
-                resetEstadoBotones();
-            }, 200);
-        };
-
-        btnAbrir.addEventListener("click", abrirModal);
-        btnCerrar.addEventListener("click", cerrarModal);
-
-        // 4. LÓGICA DE BOTONES DE ESTADO
-        const resetEstadoBotones = () => {
-             btnsEstado.forEach(b => b.classList.remove("ring-4", "ring-offset-2", "ring-gray-400"));
-        };
-
-        btnsEstado.forEach(btn => {
+        // =============================
+        //  4. CAMBIAR ESTADO DESDE BOTONES
+        // =============================
+        document.querySelectorAll(".estado-btn").forEach(btn => {
             btn.addEventListener("click", () => {
-                estadoHiddenInput.value = btn.dataset.estado; // Actualiza el input oculto
-                resetEstadoBotones();
-                btn.classList.add("ring-4", "ring-offset-2", "ring-gray-400"); // Marca visualmente
+                const estadoSeleccionado = btn.dataset.estado;
+                document.getElementById("estado").value = estadoSeleccionado;
+
+                // Estilos visuales (opcional)
+                document.querySelectorAll(".estado-btn").forEach(b => {
+                    b.classList.remove("ring-2", "ring-offset-2", "ring-blue-600");
+                });
+                btn.classList.add("ring-2", "ring-offset-2", "ring-blue-600");
             });
         });
 
-        // 5. ENVIAR FORMULARIO AL BACKEND
+        // =============================
+        // 5. NORMALIZAR VALORES AL BACKEND
+        // =============================
+
+        const normalizar = (valor, tipo) => {
+            if (tipo === "tipo") {
+                return valor.toLowerCase() === "presencial" ? "Presencial" : "Online";
+            }
+            if (tipo === "estado") {
+                if (valor === "aprobado" || valor === "activo") return "Activo";
+                if (valor === "revision" || valor === "pendiente") return "Pendiente";
+                return "Observacion";
+            }
+            return valor;
+        };
+
+        // =============================
+        // 6. SUBMIT
+        // =============================
+
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            // Obtener el valor del radio button seleccionado
-            const tipoSeleccionado = document.querySelector("input[name='tipo']:checked");
-            
-            if(!tipoSeleccionado) {
-                alert("Por favor selecciona un tipo (Presencial/Online)");
-                return;
-            }
+            const campos = getFields();
 
-            const datos = {
-                nombre: nombreInput.value,
-                tipo: tipoSeleccionado.value,
-                estado: estadoHiddenInput.value,
-                fechaInicio: fechaInicioInput.value,
-                fechaFin: fechaFinInput.value 
+            const body = {
+                nombre: campos.nombre,
+                tipo: normalizar(campos.tipo, "tipo"),
+                estado: normalizar(campos.estado, "estado"),
+                fechaInicio: campos.fechaInicio,
+                fechaFin: campos.fechaFin
             };
 
+            console.log("📤 Enviando:", body);
+
             try {
-                // Asegúrate que la ruta sea la correcta (singular o plural según tu routes.js)
-                const res = await fetch("http://localhost:3000/api/proceso", { 
+                const res = await fetch("https://sistema-de-votacion-gjzq.onrender.com/api/proceso", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        ...(token ? { "Authorization": `Bearer ${token}` } : {})
                     },
-                    body: JSON.stringify(datos)
+                    body: JSON.stringify(body)
                 });
 
                 const data = await res.json();
 
                 if (res.ok) {
-                    alert("✅ Proceso creado exitosamente");
-                    cerrarModal();
-                    cargarProcesos();
-                    location.reload(); // Por ahora recargamos la página para ver cambios si ya listas
+                    alert("✅ Proceso electoral creado con éxito");
+
+                    // Cerrar según el modal actual
+                    if (modal1) { 
+                        modal.classList.add("hidden"); 
+                    }
+                    if (modal2) {
+                        modal.classList.add("hidden");
+                    }
+
+                    // Recargar para actualizar lista
+                    location.reload();
                 } else {
-                    alert("❌ Error: " + (data.message || data.error));
+                    alert("❌ Error: " + (data.error || "No se pudo crear el proceso"));
                 }
 
-            } catch (error) {
-                console.error(error);
-                alert("Error de conexión con el servidor");
+            } catch (err) {
+                console.error(err);
+                alert("❌ Error de conexión con el servidor");
             }
         });
     });
-</script>
+    </script>
+
+    <script type="module">
+    import { cargarNombreAdmin } from "./js/admin.js";
+    cargarNombreAdmin();
+    </script>
 
 </html>

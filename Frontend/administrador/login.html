@@ -77,7 +77,8 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ usuario, password: contraseña })  // 🔥 CORREGIDO
+                    body: JSON.stringify({ usuario, password: contraseña })
+
                 });
 
                 const data = await res.json();
@@ -88,6 +89,7 @@
                 }
 
                 localStorage.setItem("tokenAdmin", data.token);
+                localStorage.setItem("adminUsuario", data.admin.usuario.split("@")[0]);
 
                 window.location.href = "principal.html";
 
