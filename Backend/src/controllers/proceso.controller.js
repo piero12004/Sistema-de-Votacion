@@ -26,27 +26,29 @@ export const obtenerProcesos = async (req, res) => {
 
     for (let p of procesos) {
       let progreso = 0;
-      let estadoNuevo = p.estado; // se recalculará
 
       if (p.fechaInicio && p.fechaFin) {
         const inicio = new Date(p.fechaInicio.getFullYear(), p.fechaInicio.getMonth(), p.fechaInicio.getDate());
         const fin = new Date(p.fechaFin.getFullYear(), p.fechaFin.getMonth(), p.fechaFin.getDate());
 
-        if (hoySoloFecha < inicio) {
-          estadoNuevo = "Pendiente";
-          progreso = 0;
-        } else if (hoySoloFecha >= inicio && hoySoloFecha <= fin) {
-          estadoNuevo = "Activo";
-          progreso = Math.round(((hoySoloFecha - inicio) / (fin - inicio)) * 100);
-        } else if (hoySoloFecha > fin) {
-          estadoNuevo = "Terminado";
+        if (hoySoloFecha >= fin) {
+          // Si ya pasó la fecha de fin, estado terminado y progreso 100%
+          if (p.estado !== "Terminado") {
+            p.estado = "Terminado";
+            await p.save();
+          }
           progreso = 100;
+        } else if (hoySoloFecha >= inicio && hoySoloFecha < fin) {
+          // Si estamos entre inicio y fin, calcular porcentaje
+          progreso = Math.round(((hoySoloFecha - inicio) / (fin - inicio)) * 100);
+        } else {
+          // Antes de la fecha de inicio, progreso 0%
+          progreso = 0;
         }
       }
 
-      // Guardar el estado recalculado aunque sea diferente al almacenado
-      if (estadoNuevo !== p.estado || progreso !== p.progreso) {
-        p.estado = estadoNuevo;
+      // Actualizar solo el progreso si cambió
+      if (p.progreso !== progreso) {
         p.progreso = progreso;
         await p.save();
       }
