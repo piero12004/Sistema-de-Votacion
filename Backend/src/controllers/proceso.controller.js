@@ -19,11 +19,22 @@ export const crearProceso = async (req, res) => {
 export const obtenerProcesos = async (req, res) => {
   try {
     const procesos = await ProcesoElectoral.find();
+    const hoy = new Date();
+
+    // Actualizar los que ya terminaron
+    for (let p of procesos) {
+      if (p.estado !== "Terminado" && p.fechaFin && new Date(p.fechaFin) < hoy) {
+        p.estado = "Terminado";
+        await p.save(); // guardar cambio en la base de datos
+      }
+    }
+
     res.json(procesos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Obtener proceso por ID
 export const obtenerProceso = async (req, res) => {

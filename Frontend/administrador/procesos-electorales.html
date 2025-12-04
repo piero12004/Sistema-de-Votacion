@@ -61,7 +61,7 @@
                     <div class="p-2 rounded-full bg-white text-sidebar-bg">
                         <i class="fas fa-user text-xl"></i>
                     </div>
-                    <span class="text-xl font-semibold">Usuario</span>
+                    <span id="nombreAdmin" class="text-xl font-semibold">Usuario</span>
                 </div>
 
                 <nav class="space-y-3">
@@ -134,68 +134,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Votos</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
-                        <tr class="hover:bg-gray-50 cursor-pointer bg-blue-50">
-                            <td class="px-6 py-4 whitespace-nowrap">Elecciones Estudiantes</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">111222333</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Presencial</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-green-600 font-semibold">Activo</td>
-                            <td class="px-6 py-4 whitespace-nowrap">20/11/2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap">55%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">1250</td>
-                        </tr>
-                        
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">Delegados de Facultad</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">111222444</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Online</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-yellow-600 font-semibold">Pendiente</td>
-                            <td class="px-6 py-4 whitespace-nowrap">01/12/2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap">0%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">0</td>
-                        </tr>
-                         
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">Renovación Junta</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">111222555</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Online</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-red-600 font-semibold">Terminado</td>
-                            <td class="px-6 py-4 whitespace-nowrap">15/10/2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap">100%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">3500</td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">Presupuestos Participativos</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">222333444</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Online</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-blue-600 font-semibold">En observación</td>
-                            <td class="px-6 py-4 whitespace-nowrap">10/01/2026</td>
-                            <td class="px-6 py-4 whitespace-nowrap">10%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">500</td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">Elección Decano</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">333444555</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Presencial</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-green-600 font-semibold">Activo</td>
-                            <td class="px-6 py-4 whitespace-nowrap">05/12/2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap">75%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">800</td>
-                        </tr>
-                        
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-6 py-4 whitespace-nowrap">Comité de Ética</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">444555666</td>
-                            <td class="px-6 py-4 whitespace-nowrap">Online</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-yellow-600 font-semibold">Pendiente</td>
-                            <td class="px-6 py-4 whitespace-nowrap">25/01/2026</td>
-                            <td class="px-6 py-4 whitespace-nowrap">0%</td>
-                            <td class="px-6 py-4 whitespace-nowrap">0</td>
-                        </tr>
-
-                    </tbody>
+                    <tbody id="tabla-procesos" class="bg-white divide-y divide-gray-200 text-sm"></tbody>
                 </table>
             </div>
 
@@ -299,8 +238,20 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="type_create" class="block text-sm font-medium text-gray-700">Tipo:</label>
-                    <input type="text" id="type_create" name="type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-custom-dark-button focus:border-custom-dark-button" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de proceso:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2 cursor-pointer hover:bg-gray-100 transition">
+                            <input type="radio" name="tipo" value="presencial" 
+                                class="text-custom-dark-button focus:ring-custom-dark-button" required>
+                            <span>Presencial</span>
+                        </label>
+
+                        <label class="flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2 cursor-pointer hover:bg-gray-100 transition">
+                            <input type="radio" name="tipo" value="online" 
+                                class="text-custom-dark-button focus:ring-custom-dark-button" required>
+                            <span>Online</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -425,84 +376,86 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // =============================
-            // 1. TOKEN (si existe)
-            // =============================
+
             const token = localStorage.getItem("tokenAdmin");
 
-            // =============================
-            // 2. DETECTAR QUÉ MODAL EXISTE
-            // =============================
-
+            // Detectar modales
             const modal1 = document.getElementById("modalProceso"); // principal.html
             const modal2 = document.getElementById("creation-modal"); // procesos-electorales.html
 
             let modal, modalContent, form;
 
             if (modal1) {
-                // --- Modal de principal.html ---
+                // principal.html
                 modal = modal1;
                 modalContent = document.getElementById("modalContenido");
                 form = document.getElementById("formProceso");
 
-                // Abrir modal
                 const btnAbrir = document.getElementById("btnAbrirModal");
                 btnAbrir?.addEventListener("click", () => {
                     modal.classList.remove("hidden");
                     setTimeout(() => modalContent.classList.remove("opacity-0", "scale-90"), 10);
                 });
 
-                // Cerrar
                 document.getElementById("btnCerrarModal")?.addEventListener("click", () => {
                     modalContent.classList.add("opacity-0", "scale-90");
                     setTimeout(() => modal.classList.add("hidden"), 200);
                 });
 
             } else if (modal2) {
-                // --- Modal de procesos-electorales.html ---
+                // procesos-electorales.html
                 modal = modal2;
                 modalContent = modal2.querySelector("div > div");
                 form = modal2.querySelector("form");
 
-                window.openCreationModal = () => modal.classList.remove("hidden");
-                window.closeCreationModal = () => modal.classList.add("hidden");
+                // Abrir modal
+                window.openCreationModal = () => {
+                    modal.classList.remove("hidden");
+                    setTimeout(() => {
+                        modalContent.classList.remove("opacity-0", "scale-90");
+                    }, 10);
+                };
+
+                // Cerrar modal
+                window.closeCreationModal = () => {
+                    modalContent.classList.add("opacity-0", "scale-90");
+                    setTimeout(() => modal.classList.add("hidden"), 200);
+                };
             }
 
-            if (!form) return; // Si no hay modal, no hacemos nada
+            if (!form) return; // no hay nada que procesar
 
             // =============================
-            // 3. LEER CAMPOS (dependen de cada HTML)
+            // Obtener valores según página
             // =============================
 
             const getFields = () => {
                 if (modal1) {
-                    // principal.html
                     return {
-                        nombre: document.getElementById("nombre").value,
+                        nombre: document.getElementById("nombre")?.value || "",
                         tipo: document.querySelector("input[name='tipo']:checked")?.value || "",
-                        estado: document.getElementById("estado").value,
-                        fechaInicio: document.getElementById("fechaInicio").value,
-                        fechaFin: document.getElementById("fechaFin").value,
+                        estado: document.getElementById("estado")?.value || "",
+                        fechaInicio: document.getElementById("fechaInicio")?.value || "",
+                        fechaFin: document.getElementById("fechaFin")?.value || "",
                     };
-                } 
+                }
 
-                // procesos-electorales.html
                 return {
-                    nombre: document.getElementById("name_create").value,
-                    tipo: document.getElementById("type_create").value,
-                    estado: document.querySelector("input[name='status_create']:checked").value,
-                    fechaInicio: document.getElementById("start_date_create").value,
-                    fechaFin: document.getElementById("end_date_create").value,
+                    nombre: document.getElementById("name_create")?.value || "",
+                    tipo: document.querySelector("input[name='tipo']:checked")?.value || "",
+                    estado: document.querySelector("input[name='status_create']:checked")?.value || "",
+                    fechaInicio: document.getElementById("start_date_create")?.value || "",
+                    fechaFin: document.getElementById("end_date_create")?.value || "",
                 };
             };
 
             // =============================
-            // 4. NORMALIZAR VALORES AL BACKEND
+            // Normalizar valores
             // =============================
 
             const normalizar = (valor, tipo) => {
                 if (tipo === "tipo") {
-                    return valor.toLowerCase() === "presencial" ? "Presencial" : "Online";
+                    return valor === "presencial" ? "Presencial" : "Online";
                 }
                 if (tipo === "estado") {
                     if (valor === "aprobado" || valor === "activo") return "Activo";
@@ -513,7 +466,7 @@
             };
 
             // =============================
-            // 5. SUBMIT
+            // Enviar formulario
             // =============================
 
             form.addEventListener("submit", async (e) => {
@@ -526,10 +479,8 @@
                     tipo: normalizar(campos.tipo, "tipo"),
                     estado: normalizar(campos.estado, "estado"),
                     fechaInicio: campos.fechaInicio,
-                    fechaFin: campos.fechaFin
+                    fechaFin: campos.fechaFin,
                 };
-
-                console.log("📤 Enviando:", body);
 
                 try {
                     const res = await fetch("https://sistema-de-votacion-gjzq.onrender.com/api/proceso", {
@@ -544,17 +495,11 @@
                     const data = await res.json();
 
                     if (res.ok) {
-                        alert("✅ Proceso electoral creado con éxito");
+                        alert("✔ Proceso electoral creado con éxito");
 
-                        // Cerrar según el modal actual
-                        if (modal1) { 
-                            modal.classList.add("hidden"); 
-                        }
-                        if (modal2) {
-                            modal.classList.add("hidden");
-                        }
+                        modalContent.classList.add("opacity-0", "scale-90");
+                        setTimeout(() => modal.classList.add("hidden"), 200);
 
-                        // Recargar para actualizar lista
                         location.reload();
                     } else {
                         alert("❌ Error: " + (data.error || "No se pudo crear el proceso"));
@@ -567,8 +512,58 @@
             });
 
         });
-        </script>
+    </script>
 
+    <script>
+        const API_URL = "https://sistema-de-votacion-gjzq.onrender.com/api/proceso";
 
+        async function cargarProcesos() {
+            try {
+                const res = await fetch(API_URL);
+                const procesos = await res.json();
+
+                const tbody = document.getElementById("tabla-procesos");
+                tbody.innerHTML = ""; // limpiar
+
+                procesos.forEach(p => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50 cursor-pointer">
+                            <td class="px-6 py-4 whitespace-nowrap">${p.nombre}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">${p._id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${p.tipo}</td>
+
+                            <td class="px-6 py-4 whitespace-nowrap ${
+                                p.estado === "Activo"
+                                    ? "text-green-600"
+                                    : p.estado === "Pendiente"
+                                    ? "text-yellow-600"
+                                    : "text-blue-600"
+                            } font-semibold">
+                                ${p.estado}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                ${p.fechaInicio ? new Date(p.fechaInicio).toLocaleDateString("es-PE") : "-"}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap">${p.progreso}%</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${p.totalVotos}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("Error cargando procesos:", err);
+            }
+        }
+
+        // Llamar al cargar la página
+        cargarProcesos();
+    </script>
+
+    <script type="module">
+        import { cargarNombreAdmin } from "./js/admin.js";
+        cargarNombreAdmin();
+    </script>
 </body>
 </html>

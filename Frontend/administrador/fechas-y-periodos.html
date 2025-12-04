@@ -121,7 +121,7 @@
                     <div class="p-2 rounded-full bg-white text-sidebar-bg">
                         <i class="fas fa-user text-xl"></i>
                     </div>
-                    <span class="text-xl font-semibold">Usuario</span>
+                    <span id="nombreAdmin" class="text-xl font-semibold">Usuario</span>
                 </div>
 
                 <nav class="space-y-3">
@@ -268,5 +268,10 @@
 
     </div>
 
+    <script type="module">
+    import { cargarNombreAdmin } from "./js/admin.js";
+    cargarNombreAdmin();
+    </script>
+    
 </body>
 </html>
