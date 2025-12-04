@@ -30,108 +30,6 @@
                 }
             }
         }
-        
-        const candidates = [
-            { id: 1001, name: 'Candidato 1', currentProcess: 'Elecciones Estudiantes', cargo: 'Presidente', estado: 'Activo', observaciones: 'Documentación completa. Cumple requisitos.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C1', phone: '555-1234', email: 'candidato1@mail.com' },
-            { id: 1002, name: 'Candidato 2', currentProcess: 'Elección Decano', cargo: 'Secretario', estado: 'Pendiente', observaciones: 'Pendiente revisión de experiencia laboral.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C2', phone: '555-5678', email: 'candidato2@mail.com' },
-            { id: 1003, name: 'Candidato 3', currentProcess: 'Elecciones Estudiantes', cargo: 'Vocal 1', estado: 'Aprobado', observaciones: 'Listo para la campaña.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C3', phone: '555-9012', email: 'candidato3@mail.com' },
-            { id: 1004, name: 'Candidato 4', currentProcess: 'Elección Decano', cargo: 'Presidente', estado: 'Rechazado', observaciones: 'No cumple con el tiempo mínimo de docencia.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C4', phone: '555-3456', email: 'candidato4@mail.com' },
-            { id: 1005, name: 'Candidato 5', currentProcess: 'Comité de Ética', cargo: 'Miembro Principal', estado: 'Activo', observaciones: 'Designación confirmada por el comité.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C5', phone: '555-7890', email: 'candidato5@mail.com' },
-            { id: 1006, name: 'Candidato 6', currentProcess: 'Comité de Ética', cargo: 'Suplente', estado: 'Aprobado', observaciones: 'Suplente confirmado.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C6', phone: '555-2345', email: 'candidato6@mail.com' },
-            { id: 1007, name: 'Candidato 7', currentProcess: 'Delegados de Facultad', cargo: 'Delegado', estado: 'Pendiente', observaciones: 'Falta carta de postulación.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C7', phone: '555-6789', email: 'candidato7@mail.com' },
-            { id: 1008, name: 'Candidato 8', currentProcess: 'Elecciones Estudiantes', cargo: 'Tesorero', estado: 'Activo', observaciones: 'Sin novedades.', img: 'https://placehold.co/150x150/d8e2ee/355b63?text=C8', phone: '555-1098', email: 'candidato8@mail.com' },
-        ];
-
-        function renderCandidateCards() {
-            const container = document.getElementById('candidate-cards-container');
-            if (!container) return;
-
-            let html = '';
-            candidates.forEach(candidate => {
-                html += `
-                    <div class="bg-candidate-card-bg p-6 rounded-xl shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg hover:bg-white border border-transparent hover:border-blue-300">
-                        <!-- Círculo de Avatar -->
-                        <div class="w-24 h-24 sm:w-32 sm:h-32 bg-candidate-circle-bg rounded-full flex items-center justify-center mb-4 overflow-hidden">
-                            <img src="${candidate.img}" alt="Avatar" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/150x150/d8e2ee/355b63?text=N/A';" />
-                        </div>
-                        
-                        <!-- Nombre del Candidato -->
-                        <h3 class="text-xl font-semibold text-main-title mb-1">${candidate.name}</h3>
-                        
-                        <!-- Información del Proceso (Pequeña) -->
-                        <p class="text-xs text-gray-500 italic truncate w-full px-2" title="${candidate.currentProcess}">
-                            Proceso: ${candidate.currentProcess}
-                        </p>
-                        
-                        <!-- Botón de detalles/acceso que abre el modal -->
-                        <button onclick="showCandidateModal(${candidate.id})" class="mt-4 text-custom-dark-button hover:text-blue-600 font-medium text-sm focus:outline-none">
-                            Ver Perfil <i class="fas fa-arrow-right ml-1 text-xs"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-
-        function showCandidateModal(candidateId) {
-            hideNewCandidateModal(); 
-
-            const candidate = candidates.find(c => c.id === candidateId);
-            const modal = document.getElementById('candidate-modal');
-            
-            if (!candidate || !modal) {
-                console.error("Candidato no encontrado o modal no inicializado.");
-                return;
-            }
-
-            document.getElementById('modal-candidate-name').textContent = candidate.name;
-            document.getElementById('modal-candidate-img').src = candidate.img;
-            document.getElementById('modal-candidate-id').textContent = candidate.id;
-            document.getElementById('modal-candidate-cargo').textContent = candidate.cargo;
-            document.getElementById('modal-candidate-estado').textContent = candidate.estado;
-            document.getElementById('modal-candidate-observaciones').textContent = candidate.observaciones;
-            document.getElementById('modal-candidate-process').textContent = candidate.currentProcess;
-
-            const estadoElement = document.getElementById('modal-candidate-estado');
-            estadoElement.className = 'font-bold';
-            if (candidate.estado === 'Activo' || candidate.estado === 'Aprobado') {
-                estadoElement.classList.add('text-green-600');
-            } else if (candidate.estado === 'Pendiente') {
-                estadoElement.classList.add('text-yellow-600');
-            } else if (candidate.estado === 'Rechazado') {
-                estadoElement.classList.add('text-red-600');
-            }
-
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden'); 
-        }
-
-        function hideCandidateModal() {
-            document.getElementById('candidate-modal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        function showNewCandidateModal() {
-            hideCandidateModal();
-
-            const modal = document.getElementById('new-candidate-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
-        }
-
-        function hideNewCandidateModal() {
-            const modal = document.getElementById('new-candidate-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', renderCandidateCards);
     </script>
 </head>
 <body class="bg-main-bg">
@@ -249,7 +147,7 @@
         
         <!-- Modal para crear un nuevo candidato -->
         <div id="new-candidate-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" onclick="if(event.target.id === 'new-candidate-modal') hideNewCandidateModal()">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 p-8 relative transform transition-all duration-300 scale-100">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 p-8 relative transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto">
                 
                 <button onclick="hideNewCandidateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold focus:outline-none">
                     &times;
@@ -259,7 +157,7 @@
                     Creación de un nuevo candidato
                 </h2>
                 
-                <form class="space-y-5">
+                <form class="space-y-5" id="new-candidate-form">
                     <div>
                         <label for="new-name" class="block text-sm font-semibold text-gray-700 mb-1">Nombre del candidato:</label>
                         <input type="text" id="new-name" placeholder="Nombre completo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
@@ -279,19 +177,25 @@
                         <label for="new-estado" class="block text-sm font-semibold text-gray-700 mb-1">Estado:</label>
                         <select id="new-estado" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
                             <option value="activo">Activo</option>
-                            <option value="pendiente">Pendiente</option>
-                            <option value="aprobado">Aprobado</option>
-                            <option value="rechazado">Rechazado</option>
+                            <option value="inactivo">Inactivo</option>
                         </select>
                     </div>
 
                     <div>
-                        <label for="new-observaciones" class="block text-sm font-semibold text-gray-700 mb-1">Observaciones:</label>
-                        <textarea id="new-observaciones" rows="3" placeholder="Añadir observaciones sobre el proceso de postulación..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Foto del candidato:</label>
+                        <input type="file" id="new-foto-file" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 mb-2">
+                        <input type="text" id="new-foto-url" placeholder="O ingresa URL de la foto" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                    </div>
+
+                    <div id="new-proceso-wrapper">
+                        <label for="new-proceso" class="block text-sm font-semibold text-gray-700 mb-1">Proceso:</label>
+                        <select id="new-proceso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            <!-- Opciones cargadas dinámicamente -->
+                        </select>
                     </div>
 
                     <div class="pt-4 flex justify-center">
-                        <button type="button" onclick="alert('Funcionalidad de registro pendiente de implementación.')" class="px-8 py-3 bg-register-btn text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
+                        <button type="button" onclick="crearNuevoCandidato()" class="px-8 py-3 bg-register-btn text-white font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition duration-150">
                             Registrar Nuevo Candidato
                         </button>
                     </div>
@@ -299,8 +203,227 @@
                 
             </div>
         </div>
+
+
         
     </div>
+
+    <script>
+        const API_URL = "https://sistema-de-votacion-gjzq.onrender.com/api/candidato";
+        const API_PROCESOS = "https://sistema-de-votacion-gjzq.onrender.com/api/proceso";
+        let candidates = [];
+        let procesos = [];
+
+        // ---------------------------
+        // Cargar candidatos desde backend
+        // ---------------------------
+        async function fetchCandidatos() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                candidates = data.map(c => ({
+                    id: c._id,
+                    name: c.nombre,
+                    dni: c.dni,
+                    cargo: c.cargo,
+                    estado: c.estado,
+                    img: c.foto || `https://placehold.co/150x150/d8e2ee/355b63?text=${c.nombre[0]}`,
+                    currentProcess: c.proceso?.nombre || "N/A"
+                }));
+                renderCandidateCards();
+            } catch (err) {
+                console.error("Error al cargar candidatos:", err);
+            }
+        }
+
+        // ---------------------------
+        // Renderizar cards de candidatos
+        // ---------------------------
+        function renderCandidateCards() {
+            const container = document.getElementById('candidate-cards-container');
+            if (!container) return;
+
+            let html = '';
+            candidates.forEach(candidate => {
+                html += `
+                <div class="bg-candidate-card-bg p-6 rounded-xl shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg hover:bg-white border border-transparent hover:border-blue-300">
+                    <div class="w-24 h-24 sm:w-32 sm:h-32 bg-candidate-circle-bg rounded-full flex items-center justify-center mb-4 overflow-hidden">
+                        <img src="${candidate.img}" alt="Avatar" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/150x150/d8e2ee/355b63?text=N/A';" />
+                    </div>
+                    <h3 class="text-xl font-semibold text-main-title mb-1">${candidate.name}</h3>
+                    ${candidate.estado === 'activo' 
+                        ? `<p class="text-xs text-gray-500 italic truncate w-full px-2" title="${candidate.currentProcess}">
+                            Proceso: ${candidate.currentProcess}
+                        </p>`
+                        : ''
+                    }
+                    <button onclick="showCandidateModal('${candidate.id}')" class="mt-4 text-custom-dark-button hover:text-blue-600 font-medium text-sm focus:outline-none">
+                        Ver Perfil <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                    </button>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ---------------------------
+        // Mostrar modal de candidato
+        // ---------------------------
+        function showCandidateModal(candidateId) {
+            hideNewCandidateModal();
+            const candidate = candidates.find(c => c.id === candidateId);
+            const modal = document.getElementById('candidate-modal');
+            if (!candidate || !modal) return;
+
+            document.getElementById('modal-candidate-name').textContent = candidate.name;
+            document.getElementById('modal-candidate-img').src = candidate.img;
+            document.getElementById('modal-candidate-id').textContent = candidate.id;
+            document.getElementById('modal-candidate-cargo').textContent = candidate.cargo;
+            document.getElementById('modal-candidate-estado').textContent = candidate.estado;
+
+            const processElement = document.getElementById('modal-candidate-process');
+            if (candidate.estado === 'activo') {
+                processElement.textContent = candidate.currentProcess;
+                processElement.parentElement.classList.remove('hidden');
+            } else {
+                processElement.textContent = '';
+                processElement.parentElement.classList.add('hidden');
+            }
+
+            const estadoElement = document.getElementById('modal-candidate-estado');
+            estadoElement.className = 'font-bold';
+            if (candidate.estado === 'activo') {
+                estadoElement.classList.add('text-green-600');
+            } else {
+                estadoElement.classList.add('text-red-600');
+            }
+
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function hideCandidateModal() {
+            document.getElementById('candidate-modal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // ---------------------------
+        // Modales crear candidato
+        // ---------------------------
+        function showNewCandidateModal() {
+            hideCandidateModal();
+            const modal = document.getElementById('new-candidate-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+
+        function hideNewCandidateModal() {
+            const modal = document.getElementById('new-candidate-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        // ---------------------------
+        // Cargar procesos para el <select>
+        //–--------------------------
+        async function cargarProcesos() {
+            try {
+                const res = await fetch(API_PROCESOS);
+                procesos = await res.json();
+                const select = document.getElementById("new-proceso");
+                select.innerHTML = procesos.map(p => `<option value="${p._id}">${p.nombre}</option>`).join('');
+            } catch (err) {
+                console.error("Error cargando procesos:", err);
+            }
+        }
+
+        // ---------------------------
+        // Controlar visibilidad de select según estado
+        // ---------------------------
+        function controlarProcesoVisibility() {
+            const estado = document.getElementById('new-estado').value;
+            const selectWrapper = document.getElementById('new-proceso-wrapper');
+            if (estado === 'inactivo') {
+                selectWrapper.classList.add('hidden');
+            } else {
+                selectWrapper.classList.remove('hidden');
+            }
+        }
+
+        // ---------------------------
+        // Crear nuevo candidato
+        // ---------------------------
+        async function crearNuevoCandidato() {
+            const nombre = document.getElementById('new-name').value;
+            const dni = document.getElementById('new-id').value;
+            const cargo = document.getElementById('new-cargo').value;
+            const estado = document.getElementById('new-estado').value;
+
+            // Enviar null si está inactivo
+            const proceso = estado === 'inactivo' ? null : document.getElementById('new-proceso').value;
+
+            let foto = document.getElementById('new-foto-url').value;
+            const fileInput = document.getElementById('new-foto-file');
+
+            if (!nombre || !dni || !cargo || (estado !== 'inactivo' && !proceso)) {
+                alert("Completa los campos obligatorios.");
+                return;
+            }
+
+            // Si seleccionó archivo local, convertirlo a Base64
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                foto = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            const nuevoCandidato = { nombre, dni, cargo, estado, foto, proceso };
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nuevoCandidato)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Candidato registrado correctamente.");
+                    // Limpiar formulario
+                    document.getElementById('new-name').value = '';
+                    document.getElementById('new-id').value = '';
+                    document.getElementById('new-cargo').value = '';
+                    document.getElementById('new-estado').value = 'activo';
+                    document.getElementById('new-proceso').value = procesos[0]?._id || '';
+                    document.getElementById('new-foto-url').value = '';
+                    document.getElementById('new-foto-file').value = '';
+                    controlarProcesoVisibility();
+                    hideNewCandidateModal();
+                    fetchCandidatos();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                console.error("Error creando candidato:", err);
+            }
+        }
+
+        // ---------------------------
+        // Inicialización
+        // ---------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCandidatos();
+            cargarProcesos();
+            // Controlar visibilidad cuando cambia estado
+            document.getElementById('new-estado').addEventListener('change', controlarProcesoVisibility);
+        });
+    </script>
 
     <script type="module">
     import { cargarNombreAdmin } from "./js/admin.js";
