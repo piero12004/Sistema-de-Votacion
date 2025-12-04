@@ -59,31 +59,14 @@
             </div>
         </section>
 
-        <section class="text-center mt-16">
+        <section id="procesos-section" class="text-center mt-16"> 
             <h3 class="text-2xl font-semibold text-gray-700 mb-10">
-                Conozca a los postulantes
+                Procesos Electorales Activos
             </h3>
+            <div id="procesos-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
-                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-user text-6xl text-gray-500"></i>
-                    </div>
-                    <p class="text-lg font-medium text-gray-800">Candidato 1</p>
-                </div>
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
-                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-user text-6xl text-gray-500"></i>
-                    </div>
-                    <p class="text-lg font-medium text-gray-800">Candidato 2</p>
-                </div>
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg transition duration-300 hover:shadow-xl cursor-pointer border border-gray-200">
-                    <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-user text-6xl text-gray-500"></i>
-                    </div>
-                    <p class="text-lg font-medium text-gray-800">Candidato 3</p>
-                </div>
             </div>
+            <p id="loading-message" class="text-gray-500 text-lg">Cargando procesos...</p>
         </section>
     </main>
 
@@ -114,7 +97,7 @@
                 </div>
 
                 <div class="flex flex-col space-y-3">
-                    <a href="candidatos.html" class="w-full">
+                    <a href="procesos-electorales-usuario.html" class="w-full">
                         <button type="button" id="submit-verification-btn"
                         class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 w-full">
                             Acceder y Votar
@@ -178,142 +161,132 @@
     </footer>
 
     <script>
+const API_URL = 'http://localhost:3000'; 
+const USER_TOKEN = localStorage.getItem('token');
+
+const openLoginBtn = document.getElementById('open-modal-btn'); 
 const loginModal = document.getElementById('login-modal');
-const openLoginBtn = document.getElementById('open-modal-btn');
 const closeLoginBtn = document.getElementById('close-modal'); 
 const openRegisterBtn = document.getElementById('open-register-btn-from-login');
+const openLoginFromRegisterBtn = document.getElementById('open-login-btn-from-register');
 const registerModal = document.getElementById('register-modal');
 const closeRegisterBtn = document.getElementById('close-register-modal'); 
 
-function toggleModal(modal, show = true) {
-    if (show) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    } else {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-}
-
-// Abrir y cerrar modales
-openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(loginModal, true); });
-closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
-loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
-
-openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
-closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
-registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
-
-// Formulario de login
 const loginForm = document.getElementById('verification-form');
 const dniInput = document.getElementById('dni-modal');
 const passwordInput = document.getElementById('password-modal');
-const errorDNI = document.getElementById('error-dni');
-const errorPassword = document.getElementById('error-password');
-
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    let valid = true;
-
-    // Validaciones simples
-    if (!/^\d{8}$/.test(dniInput.value)) {
-        errorDNI.textContent = "El DNI debe tener 8 dígitos.";
-        errorDNI.classList.remove('hidden');
-        dniInput.classList.add('border-red-500');
-        valid = false;
-    } else {
-        errorDNI.classList.add('hidden');
-        dniInput.classList.remove('border-red-500');
-        dniInput.classList.add('border-green-500');
-    }
-
-    if (!passwordInput.value.trim()) {
-        errorPassword.textContent = "La contraseña es requerida.";
-        errorPassword.classList.remove('hidden');
-        passwordInput.classList.add('border-red-500');
-        valid = false;
-    } else {
-        errorPassword.classList.add('hidden');
-        passwordInput.classList.remove('border-red-500');
-        passwordInput.classList.add('border-green-500');
-    }
-
-    if (!valid) return;
-
-    try {
-        const res = await fetch('https://sistema-de-votacion-gjzq.onrender.com/api/usuario/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dni: dniInput.value, password: passwordInput.value })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-            alert(data.message || "Error en login");
-            return;
-        }
-
-        console.log("Login exitoso:", data);
-        toggleModal(loginModal, false);
-        // Guardar token si quieres
-        localStorage.setItem('token', data.token);
-        window.location.href = 'candidatos.html';
-
-    } catch (err) {
-        console.error("Error al conectar con el backend:", err);
-        alert("Error de conexión al servidor.");
-    }
-});
-
-// Formulario de registro
-const registerForm = registerModal.querySelector('form');
-const fullNameInput = document.getElementById('full-name');
 const dniRegisterInput = document.getElementById('dni');
 const passwordRegisterInput = document.getElementById('reg-password');
 const confirmPasswordInput = document.getElementById('confirm-password');
+const fullNameInput = document.getElementById('full-name');
+const registerForm = document.getElementById('registration-form');
 
-registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+function toggleModal(modal, show = true) {
+    if (!modal) return;
+    modal.classList.toggle('hidden', !show);
+    modal.classList.toggle('flex', show);
+}
 
-    if (!fullNameInput.value.trim() || !/^\d{8}$/.test(dniRegisterInput.value) || !passwordRegisterInput.value.trim()) {
-        alert("Complete todos los campos correctamente.");
-        return;
-    }
-
-    if (passwordRegisterInput.value !== confirmPasswordInput.value) {
-        alert("Las contraseñas no coinciden.");
-        return;
-    }
-
-    try {
-        const res = await fetch('https://sistema-de-votacion-gjzq.onrender.com/api/usuario/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nombre: fullNameInput.value,
-                dni: dniRegisterInput.value,
-                password: passwordRegisterInput.value
-            })
+function handleAuthButton() {
+    if (USER_TOKEN) {
+        openLoginBtn.textContent = "Ir a Votar"; 
+        openLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'procesos-electorales.html';
         });
+    } else {
+        openLoginBtn.textContent = "Acceder / Registrarse";
+        openLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            toggleModal(loginModal, true); 
+        });
+    }
+}
 
-        const data = await res.json();
+if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
+if (loginModal) loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
 
-        if (!res.ok) {
-            alert(data.message || "Error al registrar usuario");
+if (openRegisterBtn) openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
+if (openLoginFromRegisterBtn) openLoginFromRegisterBtn.addEventListener('click', () => { toggleModal(registerModal, false); toggleModal(loginModal, true); });
+
+if (closeRegisterBtn) closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
+if (registerModal) registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
+
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!dniInput.value.trim() || !passwordInput.value.trim()) {
+            alert("DNI y contraseña son obligatorios.");
             return;
         }
 
-        alert("Registro exitoso. Ahora puede iniciar sesión.");
-        toggleModal(registerModal, false);
-        toggleModal(loginModal, true);
+        try {
+            const res = await fetch(`${API_URL}/api/usuario/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dni: dniInput.value, password: passwordInput.value })
+            });
+            const data = await res.json();
 
-    } catch (err) {
-        console.error("Error al conectar con el backend:", err);
-        alert("Error de conexión al servidor.");
-    }
-});
-</script>
+            if (!res.ok) {
+                alert(data.message || "Credenciales incorrectas o error en login.");
+                return;
+            }
+
+            localStorage.setItem('token', data.token);
+            
+            alert(`Login exitoso. Serás redirigido a los procesos electorales.`);
+            window.location.href = 'procesos-electorales.html';
+            
+        } catch (err) {
+            console.error("Error al conectar con el backend:", err);
+            alert("Error de conexión al servidor.");
+        }
+    });
+}
+
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (passwordRegisterInput.value !== confirmPasswordInput.value) {
+            alert("Las contraseñas no coinciden.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/usuario/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: fullNameInput.value,
+                    dni: dniRegisterInput.value,
+                    password: passwordRegisterInput.value
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "Error al registrar usuario. El DNI podría ya estar en uso.");
+                return;
+            }
+
+            alert("Registro exitoso. Ahora puede iniciar sesión.");
+            toggleModal(registerModal, false);
+            toggleModal(loginModal, true);
+
+        } catch (err) {
+            console.error("Error al conectar con el backend:", err);
+            alert("Error de conexión al servidor.");
+        }
+    });
+}
+window.onload = function() {
+    handleAuthButton();
+};
+    </script>
 
 </body>
 </html>

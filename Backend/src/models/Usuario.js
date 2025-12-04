@@ -1,21 +1,37 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const usuarioSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  dni: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+    nombre: { type: String, required: true },
+    dni: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    rol: { type: String, default: 'votante' }, 
 
-  // fecha en que se registró
-  fechaRegistro: { type: Date, default: Date.now },
+    fechaRegistro: { type: Date, default: Date.now },
 
-  // historial de votaciones
-  votaciones: [
-    {
-      procesoId: { type: mongoose.Schema.Types.ObjectId, ref: "ProcesoElectoral" },
-      candidatoId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidato" },
-      fecha: { type: Date, default: Date.now }
-    }
-  ]
+    votaciones: [
+        {
+            procesoId: { type: mongoose.Schema.Types.ObjectId, ref: "ProcesoElectoral" },
+            candidatoId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidato" },
+            fecha: { type: Date, default: Date.now }
+        }
+    ]
+}, {
+    timestamps: true
 });
+
+usuarioSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        return next(); 
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+usuarioSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 export default mongoose.model("Usuario", usuarioSchema);

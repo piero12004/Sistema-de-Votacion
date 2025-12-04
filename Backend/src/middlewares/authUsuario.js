@@ -1,26 +1,31 @@
 import jwt from "jsonwebtoken";
 import Usuario from "../models/Usuario.js";
 
+const JWT_SECRET = process.env.JWT_SECRET || 'TuClaveSecretaMuySegura'; 
+
 const authUsuario = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
+    let token;
+    
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        try {
+            token = req.headers.authorization.split(" ")[1];
 
-    if (!token) {
-      return res.status(401).json({ error: "Token no proporcionado" });
+            const decoded = jwt.verify(token, JWT_SECRET); 
+            req.user = await Usuario.findById(decoded.id).select('-password'); 
+
+            if (!req.user) {
+                return res.status(401).json({ error: "Usuario no autorizado (Token válido pero usuario no encontrado)" });
+            }
+
+            next();
+
+        } catch (error) {
+            console.error("Error de autenticación:", error.message);
+            return res.status(401).json({ error: "Token inválido o expirado" });
+        }
+    } else {
+        return res.status(401).json({ error: "No autorizado, no se encontró token Bearer" });
     }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const usuario = await Usuario.findById(decoded.id);
-    if (!usuario) {
-      return res.status(401).json({ error: "Usuario no autorizado" });
-    }
-
-    req.usuario = usuario; // Guardar usuario para usarlo después
-    next();
-  } catch (error) {
-    res.status(401).json({ error: "Token inválido o expirado" });
-  }
 };
 
 export default authUsuario;

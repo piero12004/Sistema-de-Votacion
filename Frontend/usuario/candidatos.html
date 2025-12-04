@@ -37,11 +37,14 @@
 
     <main class="flex-grow container mx-auto p-4 md:p-8 text-center mt-12">
         <h2 class="text-3xl font-bold text-gray-800 mb-2">
-            Elige a tu Candidato
+            Votación para: <span id="proceso-nombre" class="text-teal-700">Cargando Proceso...</span>
         </h2>
         <p class="text-gray-600 text-lg mb-12">
             Selecciona a tu candidato de preferencia. Solo puedes emitir un voto.
         </p>
+
+    <div id="candidatos-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
@@ -135,91 +138,198 @@
     </footer>
 
     <script>
-        const confirmationModal = document.getElementById('confirmation-modal');
-        const confirmCandidateName = document.getElementById('modal-confirm-candidate-name');
-        const confirmVoteBtn = document.getElementById('confirm-vote-btn');
-        const cancelVoteBtn = document.getElementById('cancel-vote-btn');
+    const API_URL = 'https://sistema-de-votacion-gjzq.onrender.com';
+    const candidatosContainer = document.getElementById('candidatos-container');
+    const procesoNombreSpan = document.getElementById('proceso-nombre');
+    const confirmationModal = document.getElementById('confirmation-modal');
+    const confirmCandidateName = document.getElementById('modal-confirm-candidate-name');
+    const confirmVoteBtn = document.getElementById('confirm-vote-btn');
+    const cancelVoteBtn = document.getElementById('cancel-vote-btn');
+    const successModal = document.getElementById('success-modal');
+    const successCandidateName = document.getElementById('modal-success-candidate-name');
+    const votedTimestamp = document.getElementById('voted-timestamp');
+    const closeSuccessModalBtn = document.getElementById('close-success-modal-btn');
+
+    let currentCandidateName = ''; 
+    let currentCandidateId = ''; 
+
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    const procesoId = getUrlParameter('procesoId');
+
+    function createCandidatoCard(candidato) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'flex flex-col items-center p-6 bg-white rounded-lg shadow-md border border-gray-200';
+        cardDiv.innerHTML = `
+            <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-user text-6xl text-gray-500"></i>
+            </div>
+            <p class="text-lg font-medium text-gray-800 mb-6">${candidato.nombre}</p>
+            <p class="text-sm font-semibold text-gray-500 mb-4">${candidato.cargo}</p>
+            <button type="button" 
+                    data-candidato-id="${candidato._id}"
+                    data-candidato-nombre="${candidato.nombre}"
+                    class="boton-votar bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-8 rounded shadow-md focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-[150px]">
+                Votar
+            </button>
+        `;
+        return cardDiv;
+    }
+
+    async function loadCandidatos() {
+        if (!procesoId) {
+            procesoNombreSpan.textContent = "Error: ID de Proceso no encontrado.";
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/usuario/proceso/${procesoId}/candidatos`);
+            const data = await res.json();
+
+            if (!res.ok || data.candidatos === undefined) {
+                procesoNombreSpan.textContent = "Error: Proceso inactivo o no existe.";
+                candidatosContainer.innerHTML = `<p class="text-xl text-red-500 mt-8 col-span-full">${data.message || 'No se pudieron cargar los candidatos.'}</p>`;
+                return;
+            }
+            
+            procesoNombreSpan.textContent = data.proceso; 
+            
+            if (data.candidatos.length > 0) {
+                data.candidatos.forEach(candidato => {
+                    candidatosContainer.appendChild(createCandidatoCard(candidato));
+                });
+                attachVoteListeners(); 
+            } else {
+                 candidatosContainer.innerHTML = '<p class="text-xl text-gray-500 mt-8 col-span-full">No hay candidatos activos en este proceso.</p>';
+            }
+
+        } catch (err) {
+            console.error("Error al cargar candidatos:", err);
+            procesoNombreSpan.textContent = "Error de conexión al servidor.";
+        }
+    }
+    
+    function showConfirmationModal(candidateName) {
+        currentCandidateName = candidateName; 
+        confirmCandidateName.textContent = candidateName; 
         
-        const successModal = document.getElementById('success-modal');
-        const successCandidateName = document.getElementById('modal-success-candidate-name');
-        const votedTimestamp = document.getElementById('voted-timestamp');
-        const closeSuccessModalBtn = document.getElementById('close-success-modal-btn');
+        confirmationModal.classList.remove('hidden');
+        confirmationModal.classList.add('flex');
+    }
+
+    function hideConfirmationModal() {
+        confirmationModal.classList.add('hidden');
+        confirmationModal.classList.remove('flex');
+    }
+
+    function showSuccessModal(candidatoNombre) {
+        const now = new Date();
+        const dateString = now.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        successCandidateName.textContent = candidatoNombre; 
+        votedTimestamp.textContent = `Fecha: ${dateString} - Hora: ${timeString}`;
         
+        successModal.classList.remove('hidden');
+        successModal.classList.add('flex');
+    }
+
+    function hideSuccessModal() {
+        successModal.classList.add('hidden');
+        successModal.classList.remove('flex');
+        currentCandidateName = '';
+        currentCandidateId = '';
+        window.location.href = 'index.html'; 
+    }
+
+    function attachVoteListeners() {
         const voteButtons = document.querySelectorAll('.boton-votar');
-
-        let currentCandidateName = ''; 
-
-        function showConfirmationModal(candidateName) {
-            currentCandidateName = candidateName; 
-            confirmCandidateName.textContent = candidateName; 
-            
-            confirmationModal.classList.remove('hidden');
-            confirmationModal.classList.add('flex');
-        }
-
-        function hideConfirmationModal() {
-            confirmationModal.classList.add('hidden');
-            confirmationModal.classList.remove('flex');
-        }
-
-        function showSuccessModal() {
-            const now = new Date();
-            const dateString = now.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-            successCandidateName.textContent = currentCandidateName; 
-            votedTimestamp.textContent = `Fecha: ${dateString} - Hora: ${timeString}`;
-            
-            successModal.classList.remove('hidden');
-            successModal.classList.add('flex');
-        }
-
-        function hideSuccessModal() {
-            successModal.classList.add('hidden');
-            successModal.classList.remove('flex');
-            currentCandidateName = '';
-        }
-
+        
         voteButtons.forEach(button => {
             button.addEventListener('click', function() {
-                const candidateCard = button.closest('.flex-col');
-                const candidateName = candidateCard.querySelector('p').textContent; 
+                currentCandidateName = button.getAttribute('data-candidato-nombre');
+                currentCandidateId = button.getAttribute('data-candidato-id'); 
                 
-                showConfirmationModal(candidateName);
+                showConfirmationModal(currentCandidateName);
             });
         });
+    }
 
-        cancelVoteBtn.addEventListener('click', hideConfirmationModal);
+    cancelVoteBtn.addEventListener('click', hideConfirmationModal);
+    closeSuccessModalBtn.addEventListener('click', hideSuccessModal);
 
-        confirmVoteBtn.addEventListener('click', function() {
+    [confirmationModal, successModal].forEach(m => {
+        m.addEventListener('click', function(e) {
+            if (e.target === m) {
+                if (m.id === 'confirmation-modal') {
+                    hideConfirmationModal();
+                } else if (m.id === 'success-modal') {
+                    hideSuccessModal();
+                }
+            }
+        });
+    });
+
+    confirmVoteBtn.addEventListener('click', async function() {
+        hideConfirmationModal();
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Error: Debes iniciar sesión para votar.");
+            window.location.href = 'index.html';
+            return;
+        }
+
+        if (!currentCandidateId || !procesoId) {
+             alert("Error: Datos de voto incompletos.");
+             return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/usuario/votar`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    candidatoId: currentCandidateId, 
+                    procesoId: procesoId 
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "Error al registrar el voto.");
+                return;
+            }
+
+            console.log("Voto registrado con éxito:", data);
             
-            console.log(`Voto confirmado por: ${currentCandidateName}`);
-            
-            voteButtons.forEach(btn => {
-                btn.textContent = 'Votado';
+            document.querySelectorAll('.boton-votar').forEach(btn => {
+                btn.textContent = 'Voto Emitido';
                 btn.disabled = true;
                 btn.classList.remove('bg-teal-600', 'hover:bg-teal-700');
                 btn.classList.add('bg-gray-500', 'cursor-not-allowed');
             });
             
-            hideConfirmationModal();
+            showSuccessModal(currentCandidateName); 
             
-            showSuccessModal();
-        });
+        } catch (err) {
+            console.error("Error al emitir voto:", err);
+            alert("Error de conexión o de servidor al intentar votar.");
+        }
+    });
 
-        closeSuccessModalBtn.addEventListener('click', hideSuccessModal);
 
-        [confirmationModal, successModal].forEach(m => {
-            m.addEventListener('click', function(e) {
-                if (e.target === m) {
-                    if (m.id === 'confirmation-modal') {
-                        hideConfirmationModal();
-                    } else if (m.id === 'success-modal') {
-                        hideSuccessModal();
-                    }
-                }
-            });
-        });
-    </script>
+    loadCandidatos();
+    
+</script>
 </body>
 </html>
