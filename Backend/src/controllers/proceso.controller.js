@@ -20,13 +20,13 @@ export const obtenerProcesos = async (req, res) => {
   try {
     const procesos = await ProcesoElectoral.find();
     const hoy = new Date();
-    const hoySoloFecha = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()); // 00:00 de hoy
+    const hoySoloFecha = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
     const procesosActualizados = [];
 
     for (let p of procesos) {
       let progreso = 0;
-      let estadoNuevo = p.estado;
+      let estadoNuevo = p.estado; // se recalculará
 
       if (p.fechaInicio && p.fechaFin) {
         const inicio = new Date(p.fechaInicio.getFullYear(), p.fechaInicio.getMonth(), p.fechaInicio.getDate());
@@ -44,9 +44,10 @@ export const obtenerProcesos = async (req, res) => {
         }
       }
 
-      // Actualizar el estado solo si cambió
-      if (estadoNuevo !== p.estado) {
+      // Guardar el estado recalculado aunque sea diferente al almacenado
+      if (estadoNuevo !== p.estado || progreso !== p.progreso) {
         p.estado = estadoNuevo;
+        p.progreso = progreso;
         await p.save();
       }
 
