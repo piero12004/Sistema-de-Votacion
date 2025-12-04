@@ -20,30 +20,36 @@ export const obtenerProcesos = async (req, res) => {
   try {
     const procesos = await ProcesoElectoral.find();
     const hoy = new Date();
+    const hoySoloFecha = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()); // 00:00 de hoy
 
     const procesosActualizados = [];
 
     for (let p of procesos) {
       let progreso = 0;
+      let estadoNuevo = p.estado;
 
-      // Determinar el estado según la fecha
       if (p.fechaInicio && p.fechaFin) {
-        if (hoy < p.fechaInicio) {
-          p.estado = "Pendiente"; // aún no inicia
+        const inicio = new Date(p.fechaInicio.getFullYear(), p.fechaInicio.getMonth(), p.fechaInicio.getDate());
+        const fin = new Date(p.fechaFin.getFullYear(), p.fechaFin.getMonth(), p.fechaFin.getDate());
+
+        if (hoySoloFecha < inicio) {
+          estadoNuevo = "Pendiente";
           progreso = 0;
-        } else if (hoy >= p.fechaInicio && hoy <= p.fechaFin) {
-          p.estado = "Activo"; // en curso
-          progreso = Math.round(((hoy - p.fechaInicio) / (p.fechaFin - p.fechaInicio)) * 100);
-        } else if (hoy > p.fechaFin) {
-          p.estado = "Terminado"; // ya pasó la fecha de fin
+        } else if (hoySoloFecha >= inicio && hoySoloFecha <= fin) {
+          estadoNuevo = "Activo";
+          progreso = Math.round(((hoySoloFecha - inicio) / (fin - inicio)) * 100);
+        } else if (hoySoloFecha > fin) {
+          estadoNuevo = "Terminado";
           progreso = 100;
         }
       }
 
-      // Solo guardar si hubo un cambio de estado
-      if (p.isModified()) await p.save();
+      // Actualizar el estado solo si cambió
+      if (estadoNuevo !== p.estado) {
+        p.estado = estadoNuevo;
+        await p.save();
+      }
 
-      // Añadir el progreso calculado al objeto que se enviará
       procesosActualizados.push({ ...p.toObject(), progreso });
     }
 
