@@ -240,12 +240,13 @@
                         <input type="text" id="new-foto-url" placeholder="O ingresa URL de la foto" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
                     </div>
 
-                    <div id="new-proceso-wrapper">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Procesos:</label>
-                        <div id="new-proceso-checkboxes" class="space-y-1">
-                            <!-- Checkboxes dinámicos -->
-                        </div>
+                    <div id="new-proceso-wrapper"> 
+                        <label for="new-proceso" class="block text-sm font-semibold text-gray-700 mb-1">Proceso:</label> 
+                        <select id="new-proceso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"> 
+                            <!-- Opciones cargadas dinámicamente --> 
+                        </select> 
                     </div>
+
 
 
                     <div class="pt-4 flex justify-center">
@@ -483,19 +484,12 @@
             try {
                 const res = await fetch(API_PROCESOS);
                 procesos = await res.json();
-
-                const wrapper = document.getElementById("new-proceso-checkboxes");
-                wrapper.innerHTML = procesos.map(p => `
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" value="${p._id}" class="proceso-checkbox">
-                        <span>${p.nombre}</span>
-                    </label>
-                `).join('');
+                const select = document.getElementById("new-proceso");
+                select.innerHTML = procesos.map(p => `<option value="${p._id}">${p.nombre}</option>`).join('');
             } catch (err) {
                 console.error("Error cargando procesos:", err);
             }
         }
-
 
         // ---------------------------
         // Controlar visibilidad de select según estado
@@ -518,31 +512,17 @@
             const dni = document.getElementById('new-id').value;
             const cargo = document.getElementById('new-cargo').value;
             const estado = document.getElementById('new-estado').value;
-
-            // Enviar null si está inactivo
-            let procesosSeleccionados = [];
-
-            // Si está activo, obtener los checks marcados
-            if (estado !== 'inactivo') {
-                procesosSeleccionados = Array.from(
-                    document.querySelectorAll('.proceso-checkbox:checked')
-                ).map(cb => cb.value);
-
-                if (procesosSeleccionados.length === 0) {
-                    alert("Selecciona al menos un proceso.");
-                    return;
-                }
-            }
-
-            let foto = document.getElementById('new-foto-url').value;
-            const fileInput = document.getElementById('new-foto-file');
+            const proceso = estado === 'inactivo' ? null : document.getElementById('new-proceso').value;
 
             if (!nombre || !dni || !cargo || (estado !== 'inactivo' && !proceso)) {
                 alert("Completa los campos obligatorios.");
                 return;
             }
 
-            // Si seleccionó archivo local, convertirlo a Base64
+            let foto = document.getElementById('new-foto-url').value;
+            const fileInput = document.getElementById('new-foto-file');
+
+            // Convertir archivo a Base64 si se selecciona
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 foto = await new Promise(resolve => {
@@ -568,7 +548,7 @@
                     document.getElementById('new-id').value = '';
                     document.getElementById('new-cargo').value = '';
                     document.getElementById('new-estado').value = 'activo';
-                    document.querySelectorAll('.proceso-checkbox').forEach(cb => cb.checked = false);
+                    document.getElementById('new-proceso').value = procesos[0]?._id || '';
                     document.getElementById('new-foto-url').value = '';
                     document.getElementById('new-foto-file').value = '';
                     controlarProcesoVisibility();
