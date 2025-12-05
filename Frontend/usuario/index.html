@@ -9,55 +9,64 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <div class="bg-gray-50 text-center text-sm py-1 border-b border-gray-200">
-        <span class="text-gray-600">Faltan: </span>
-        <span class="font-bold text-red-600 mx-2">X meses</span>
-        <span class="font-bold text-red-600 mx-2">X días</span>
-        <span class="font-bold text-red-600 mx-2">X horas</span>
+    <div id="fecha-hora" class="bg-gray-50 text-center text-sm py-1 border-b border-gray-200 text-gray-700 font-medium">
+    <!-- Aquí aparecerá la fecha y hora -->
     </div>
 
     <header class="bg-teal-700 shadow-lg">
         <div class="container mx-auto flex items-center justify-between p-4">
             
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                    <span class="font-extrabold text-white text-xl leading-none">V</span>
-                </div>
-                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">VotUP</h1>
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <img src="logo.jpg" alt="VotUP Logo" class="w-12 h-12 rounded-lg object-cover">
+                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">VotaUTP</h1>
             </div>
 
+            <!-- Navegación -->
             <nav class="flex space-x-8 text-white text-lg font-semibold">
                 <a href="#" class="hover:text-gray-300 transition duration-300">Inicio</a>
                 <a href="#" class="hover:text-gray-300 transition duration-300">Candidatos</a>
-                <a href="#" class="hover:text-gray-300 transition duration-300">Contacto</a>
             </nav>
 
-            <a href="#" id="open-modal-btn" class="bg-white text-teal-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300 shadow-md">
-                Iniciar Sesion
+            <!-- Botón de login -->
+            <a href="#" id="open-modal-btn" 
+            class="bg-white text-teal-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300 shadow-md">
+            Iniciar Sesión
             </a>
         </div>
     </header>
 
+
     <main class="container mx-auto p-4 md:p-8">
 
-        <section class="bg-blue-800 text-white rounded-lg shadow-xl overflow-hidden mb-12">
+        <section class="relative bg-gradient-to-r from-teal-600 to-blue-700 text-white rounded-3xl shadow-2xl overflow-hidden mb-12">
             <div class="flex flex-col md:flex-row items-stretch">
-                <div class="p-8 md:p-12 w-full md:w-7/12 bg-blue-700/90 flex flex-col justify-center">
-                    <h2 class="text-4xl sm:text-5xl font-extrabold mb-2 leading-tight">
+                
+                <!-- Texto -->
+                <div class="p-8 md:p-16 w-full md:w-7/12 flex flex-col justify-center bg-black bg-opacity-20">
+                    <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight drop-shadow-lg">
                         Elecciones UTP 2026
                     </h2>
-                    <p class="text-xl sm:text-2xl font-light">
-                        Tu voto cuenta: seleccione a su peruano preferido se realizará, este XX
+                    <p class="text-lg sm:text-xl font-light mb-6 drop-shadow-md">
+                        Tu voto cuenta: selecciona a tu peruano preferido. Este proceso se realizará el día XX.
                     </p>
+                    <a href="#procesos-section" 
+                    class="inline-block bg-white text-teal-700 font-bold py-3 px-6 rounded-full shadow-lg hover:scale-105 transform transition-all duration-300">
+                        Ver Procesos Activos
+                    </a>
+                </div>
+
+                <!-- Imagen / ilustración -->
+                <div class="w-full md:w-5/12 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80" 
+                        alt="Elecciones UTP" 
+                        class="h-64 md:h-full w-full object-cover rounded-tr-3xl rounded-br-3xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-tr-3xl rounded-br-3xl"></div>
                 </div>
                 
-                <div class="w-full md:w-5/12 overflow-hidden">
-                    <div class="h-64 md:h-full bg-cover bg-center" 
-                          style="background-image: url(''); background-size: cover; background-position: center; min-height: 250px;">
-                    </div>
-                </div>
             </div>
         </section>
+
 
         <section id="procesos-section" class="text-center mt-16"> 
             <h3 class="text-2xl font-semibold text-gray-700 mb-10">
@@ -159,128 +168,203 @@
     </footer>
 
     <script>
-const API_URL = 'http://localhost:3000'; 
-let USER_TOKEN = localStorage.getItem('token'); 
+    const API_URL = 'https://sistema-de-votacion-gjzq.onrender.com'; 
+    let USER_TOKEN = localStorage.getItem('token'); 
 
-const openLoginBtn = document.getElementById('open-modal-btn'); 
-const loginModal = document.getElementById('login-modal'); 
-const closeLoginBtn = document.getElementById('close-modal'); 
-const openRegisterBtn = document.getElementById('open-register-btn-from-login');
-const registerModal = document.getElementById('register-modal');
-const closeRegisterBtn = document.getElementById('close-register-modal'); 
+    const openLoginBtn = document.getElementById('open-modal-btn'); 
+    const loginModal = document.getElementById('login-modal'); 
+    const closeLoginBtn = document.getElementById('close-modal'); 
+    const openRegisterBtn = document.getElementById('open-register-btn-from-login');
+    const registerModal = document.getElementById('register-modal');
+    const closeRegisterBtn = document.getElementById('close-register-modal'); 
 
-const loginForm = document.getElementById('verification-form');
-const registerForm = document.getElementById('registration-form');
+    const loginForm = document.getElementById('verification-form');
+    const registerForm = document.getElementById('registration-form');
 
-const dniInput = document.getElementById('dni-modal');
-const passwordInput = document.getElementById('password-modal');
-const fullNameInput = document.getElementById('full-name');
-const dniRegisterInput = document.getElementById('dni-reg');
-const passwordRegisterInput = document.getElementById('reg-password');
-const confirmPasswordInput = document.getElementById('confirm-password');
+    const dniInput = document.getElementById('dni-modal');
+    const passwordInput = document.getElementById('password-modal');
+    const fullNameInput = document.getElementById('full-name');
+    const dniRegisterInput = document.getElementById('dni-reg');
+    const passwordRegisterInput = document.getElementById('reg-password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
 
-function toggleModal(modal, show = true) {
-    if (!modal) return;
-    modal.classList.toggle('hidden', !show);
-    modal.classList.toggle('flex', show);
-}
-
-const openModalHandler = (e) => {
-    e.preventDefault(); 
-    toggleModal(loginModal, true);
-};
-
-function handleAuthButton() {
-    USER_TOKEN = localStorage.getItem('token'); 
-    const button = openLoginBtn; 
-    
-    button.removeEventListener('click', openModalHandler);
-
-    if (USER_TOKEN) {
-        button.textContent = "Ir a Votar"; 
-        button.href = 'procesos-electorales-usuario.html';
-    } else {
-        button.textContent = "Acceder / Registrarse";
-        button.href = '#';
-        button.addEventListener('click', openModalHandler); 
+    function toggleModal(modal, show = true) {
+        if (!modal) return;
+        modal.classList.toggle('hidden', !show);
+        modal.classList.toggle('flex', show);
     }
-}
 
-if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
-if (loginModal) loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
+    const openModalHandler = (e) => {
+        e.preventDefault(); 
+        toggleModal(loginModal, true);
+    };
 
-if (openRegisterBtn) openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
+    function handleAuthButton() {
+        USER_TOKEN = localStorage.getItem('token'); 
+        const button = openLoginBtn; 
+        
+        button.removeEventListener('click', openModalHandler);
 
-if (closeRegisterBtn) closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
-if (registerModal) registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
+        if (USER_TOKEN) {
+            button.textContent = "Ir a Votar"; 
+            button.href = 'procesos-electorales-usuario.html';
+        } else {
+            button.textContent = "Acceder / Registrarse";
+            button.href = '#';
+            button.addEventListener('click', openModalHandler); 
+        }
+    }
+
+    if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => toggleModal(loginModal, false));
+    if (loginModal) loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
+
+    if (openRegisterBtn) openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
+
+    if (closeRegisterBtn) closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
+    if (registerModal) registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
 
 
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const dni = dniInput.value.trim();
-        const password = passwordInput.value.trim();
-        if (!dni || !password) { alert("DNI y contraseña son obligatorios."); return; }
-        try {
-            const res = await fetch(`${API_URL}/api/usuarios/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dni, password })
-            });
-            const data = await res.json(); 
-            if (res.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.usuario)); 
-                if (data.usuario.rol === 'votante') {
-                     window.location.href = 'procesos-electorales-usuario.html';
-                    } else if (data.usuario.rol === 'administrador') {
-                        window.location.href = 'dashboard-admin.html'; 
-                    }
-                } else {
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dni = dniInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!dni || !password) {
+                alert("DNI y contraseña son obligatorios.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/usuario/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dni, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    // Si la respuesta no es correcta, mostrar mensaje y salir
                     alert(data.message || 'Credenciales incorrectas');
+                    return;
                 }
-            window.location.href = 'procesos-electorales-usuario.html';
-        } catch (err) {
-            console.error("Error al conectar con el backend:", err);
-            alert("Error de conexión al servidor.");
+
+                // Guardar token y datos del usuario
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.usuario));
+
+                // Redirigir según rol
+                if (data.usuario.rol === 'votante') {
+                    window.location.href = 'procesos-electorales-usuario.html';
+                } else if (data.usuario.rol === 'administrador') {
+                    window.location.href = 'dashboard-admin.html';
+                }
+
+            } catch (err) {
+                console.error("Error al conectar con el backend:", err);
+                alert("Error de conexión al servidor.");
+            }
+        });
+    }
+
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = fullNameInput.value.trim();
+            const dni = dniRegisterInput.value.trim();
+            const password = passwordRegisterInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (password !== confirmPassword) { alert("Las contraseñas no coinciden."); return; }
+            if (!nombre || !dni || !password) { alert("Todos los campos son obligatorios."); return; }
+
+            try {
+                const res = await fetch(`${API_URL}/api/usuario/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, dni, password })
+                });
+                const data = await res.json();
+                if (!res.ok) { alert(data.message || "Error al registrar usuario. El DNI podría ya estar en uso."); return; }
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify({ id: data.usuario.id, rol: data.usuario.rol }));
+                alert("Registro exitoso. Serás redirigido.");
+                window.location.href = 'procesos-electorales-usuario.html';
+            } catch (err) {
+                console.error("Error al conectar con el backend:", err);
+                alert("Error de conexión al servidor.");
+            }
+        });
+    }
+
+    window.onload = function() {
+        handleAuthButton();
+    };
+    </script>
+
+    <script>
+        const procesosContainer = document.getElementById('procesos-container');
+        const loadingMessage = document.getElementById('loading-message');
+
+        async function cargarProcesosActivos() {
+            if (!procesosContainer) return;
+            loadingMessage.textContent = "Cargando procesos...";
+
+            try {
+                const res = await fetch(`${API_URL}/api/proceso`);
+                const procesos = await res.json();
+
+                const activos = procesos.filter(p => p.estado === "Activo");
+
+                procesosContainer.innerHTML = activos.length 
+                    ? activos.map(p => `
+                        <div class="bg-gradient-to-r from-teal-500 to-teal-700 p-6 rounded-2xl shadow-lg border border-teal-600 transform transition-all hover:scale-105 hover:shadow-2xl text-white">
+                            <h4 class="text-xl font-bold mb-3">${p.nombre}</h4>
+                            <p class="flex items-center gap-2 mb-1"><i class="fas fa-layer-group"></i> Tipo: ${p.tipo}</p>
+                            <p class="flex items-center gap-2 mb-1"><i class="fas fa-calendar-alt"></i> Inicio: ${new Date(p.fechaInicio).toLocaleDateString()}</p>
+                            <p class="flex items-center gap-2 mb-3"><i class="fas fa-calendar-check"></i> Fin: ${new Date(p.fechaFin).toLocaleDateString()}</p>
+                            <div class="bg-white bg-opacity-30 h-2 w-full rounded-full overflow-hidden">
+                                <div class="bg-white h-full rounded-full" style="width: ${p.progreso || 0}%;"></div>
+                            </div>
+                        </div>
+                    `).join("")
+                    : "<p class='text-gray-500'>No hay procesos activos disponibles.</p>";
+            } catch (err) {
+                console.error("Error al cargar procesos:", err);
+                procesosContainer.innerHTML = "<p class='text-red-500'>Error al cargar procesos.</p>";
+            } finally {
+                loadingMessage.textContent = "";
+            }
         }
-    });
-}
 
-if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nombre = fullNameInput.value.trim();
-        const dni = dniRegisterInput.value.trim();
-        const password = passwordRegisterInput.value;
-        const confirmPassword = confirmPasswordInput.value;
+        window.addEventListener('DOMContentLoaded', cargarProcesosActivos);
+    </script>
 
-        if (password !== confirmPassword) { alert("Las contraseñas no coinciden."); return; }
-        if (!nombre || !dni || !password) { alert("Todos los campos son obligatorios."); return; }
+    <script>
+        function actualizarFechaHora() {
+            const contenedor = document.getElementById("fecha-hora");
+            if (!contenedor) return;
 
-        try {
-            const res = await fetch(`${API_URL}/api/usuarios/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, dni, password })
-            });
-            const data = await res.json();
-            if (!res.ok) { alert(data.message || "Error al registrar usuario. El DNI podría ya estar en uso."); return; }
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify({ id: data.usuario.id, rol: data.usuario.rol }));
-            alert("Registro exitoso. Serás redirigido.");
-            window.location.href = 'procesos-electorales-usuario.html';
-        } catch (err) {
-            console.error("Error al conectar con el backend:", err);
-            alert("Error de conexión al servidor.");
+            const ahora = new Date();
+
+            // Opcional: formateo bonito de la fecha y hora
+            const opciones = {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false,
+            };
+            const fechaHoraFormateada = ahora.toLocaleDateString('es-PE', opciones);
+
+            contenedor.textContent = `Hoy: ${fechaHoraFormateada}`;
         }
-    });
-}
 
-window.onload = function() {
-    handleAuthButton();
-};
-</script>
+        // Actualizar al cargar
+        actualizarFechaHora();
 
+        // Actualizar cada segundo
+        setInterval(actualizarFechaHora, 1000);
+    </script>
 </body>
 </html>
