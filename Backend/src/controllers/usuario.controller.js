@@ -154,7 +154,7 @@ export const emitirVoto = async (req, res) => {
         }
 
         const votoExistente = await Voto.findOne({ 
-            votante: votanteId, 
+            usuario: votanteId, 
             proceso: procesoId 
         });
         
@@ -178,7 +178,7 @@ export const emitirVoto = async (req, res) => {
         );
 
         const nuevoVoto = await Voto.create({
-           votante: votanteId,
+           usuario: votanteId,
            proceso: procesoId,
            candidato: candidatoId
         });
