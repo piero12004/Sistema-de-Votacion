@@ -271,6 +271,14 @@
             const candidate = candidates.find(c => c.id === candidateId);
             if (!candidate) return;
 
+            if (candidate.estado === 'activo' && candidate.currentProcess !== "N/A") {
+                const procesoActual = procesos.find(p => p._id === candidate.procesoId);
+                if (procesoActual?.estado === "Activo") {
+                    const confirmar = confirm(`Este candidato pertenece al proceso "${procesoActual.nombre}" que está ACTIVO. ¿Estás seguro de editarlo?`);
+                    if (!confirmar) return; // cancelar acción
+                }
+            }
+
             candidatoEditarId = candidateId;
 
             document.getElementById('edit-name').value = candidate.name;
@@ -364,7 +372,8 @@
                     cargo: c.cargo,
                     estado: c.estado,
                     img: c.foto || `https://placehold.co/150x150/d8e2ee/355b63?text=${c.nombre[0]}`,
-                    currentProcess: c.proceso?.nombre || "N/A"
+                    currentProcess: c.proceso?.nombre || "N/A",
+                    procesoId: c.proceso?._id || null
                 }));
                 renderCandidateCards();
             } catch (err) {
@@ -566,6 +575,17 @@
         // Acciones de candidato (editar / eliminar)
         // ---------------------------
         async function eliminarCandidatoModal(candidateId) {
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+
+            if (candidate.estado === 'activo' && candidate.currentProcess !== "N/A") {
+                const procesoActual = procesos.find(p => p._id === candidate.procesoId);
+                if (procesoActual?.estado === "Activo") {
+                    const confirmarActivo = confirm(`Este candidato pertenece al proceso "${procesoActual.nombre}" que está ACTIVO. ¿Estás seguro de eliminarlo?`);
+                    if (!confirmarActivo) return; // cancelar acción
+                }
+            }
+
             if (!confirm("¿Seguro que deseas eliminar este candidato?")) return;
 
             try {
@@ -582,6 +602,7 @@
                 console.error("Error eliminando candidato:", err);
             }
         }
+
 
         function showEditFromDetailsModal() {
             const candidateId = document.getElementById('modal-candidate-hidden-id').value;
