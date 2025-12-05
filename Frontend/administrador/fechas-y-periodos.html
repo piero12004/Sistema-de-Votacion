@@ -45,8 +45,8 @@
         }
 
         function formatearFecha(fechaISO) {
-            const fecha = new Date(fechaISO);
-            return fecha.toLocaleDateString("es-PE"); // d/m/aaaa
+            const [year, month, day] = fechaISO.split("T")[0].split("-");
+            return `${day}/${month}/${year}`;
         }
 
         async function renderProcesos(procesos) {
@@ -194,42 +194,52 @@
             </div>
         </div>
 
-        <!-- Modal Editar Periodo -->
-        <div id="modal-editar" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
-            <div class="bg-white p-6 rounded-xl w-96 shadow-xl">
-                <h2 class="text-xl font-bold mb-4">Editar Periodo</h2>
+        <!-- MODAL EDITAR -->
+        <div id="modal-editar" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+                <h2 class="text-xl font-bold mb-4 text-custom-dark-button">Editar Periodo</h2>
 
                 <form id="form-editar">
                     <input type="hidden" id="editar-id">
 
                     <label class="block mb-2 font-semibold">Nombre:</label>
-                    <input id="editar-nombre" class="w-full p-2 mb-3 border rounded">
+                    <input id="editar-nombre" type="text" class="w-full border p-2 rounded mb-3">
 
                     <label class="block mb-2 font-semibold">Fecha Inicio:</label>
-                    <input type="date" id="editar-inicio" class="w-full p-2 mb-3 border rounded">
+                    <input id="editar-inicio" type="date" class="w-full border p-2 rounded mb-3">
 
                     <label class="block mb-2 font-semibold">Fecha Fin:</label>
-                    <input type="date" id="editar-fin" class="w-full p-2 mb-4 border rounded">
+                    <input id="editar-fin" type="date" class="w-full border p-2 rounded mb-4">
 
-                    <div class="flex justify-end gap-3">
-                        <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 bg-gray-400 text-white rounded">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+                            Guardar
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Modal Confirmar Eliminación -->
-        <div id="modal-eliminar" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
-            <div class="bg-white p-6 rounded-xl w-80 shadow-xl text-center">
-                <p class="text-lg font-semibold mb-4">¿Eliminar este periodo?</p>
+        <div id="modal-eliminar" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm">
+                <h3 class="text-lg font-bold mb-4 text-red-600">Eliminar Periodo</h3>
+                <p class="mb-5">¿Seguro que deseas eliminar este periodo?</p>
 
-                <div class="flex justify-center gap-4">
-                    <button onclick="cerrarModalEliminar()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-                    <button onclick="confirmarEliminar()" class="px-4 py-2 bg-red-600 text-white rounded">Eliminar</button>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModalEliminar()" class="px-4 py-2 bg-gray-400 text-white rounded">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmarEliminar()" class="px-4 py-2 bg-red-600 text-white rounded">
+                        Eliminar
+                    </button>
                 </div>
             </div>
         </div>
+
         
     </div>
     <script>

@@ -1,5 +1,6 @@
 import {Router} from "express";
-import { 
+import {
+  crearPeriodo, 
   obtenerPeriodosPorProceso,
   editarPeriodo,
   eliminarPeriodo,
@@ -12,5 +13,6 @@ router.get("/proceso/:id", obtenerPeriodosPorProceso); // obtener periodos por p
 router.get("/:id", obtenerPeriodoPorId);
 router.put("/:id", editarPeriodo);                     // editar un periodo
 router.delete("/:id", eliminarPeriodo);                // eliminar periodo
+router.post("/", crearPeriodo);                        //añadir periodo
 
 export default router;

@@ -10,6 +10,22 @@ export const obtenerPeriodosPorProceso = async (req, res) => {
   }
 };
 
+// Crear un nuevo periodo
+export const crearPeriodo = async (req, res) => {
+  try {
+    const periodo = new Periodo(req.body);
+    const guardado = await periodo.save();
+
+    res.status(201).json({
+      message: "Periodo creado correctamente",
+      data: guardado
+    });
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 // Editar un periodo
 export const editarPeriodo = async (req, res) => {
   try {
