@@ -25,7 +25,8 @@ import usuarioRoutes from "./src/routes/usuario.routes.js";
 import procesoRoutes from "./src/routes/proceso.routes.js";
 import candidatoRoutes from "./src/routes/candidato.routes.js";
 import votoRoutes from "./src/routes/voto.routes.js";
-import periodoRoutes from "./src/routes/periodo.routes.js"
+import periodoRoutes from "./src/routes/periodo.routes.js";
+import resultadosRoutes from "./routes/resultados.routes.js";
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/usuario", usuarioRoutes);
@@ -33,6 +34,7 @@ app.use("/api/proceso", procesoRoutes);
 app.use("/api/candidato", candidatoRoutes);
 app.use("/api/voto", votoRoutes);
 app.use("/api/periodo",periodoRoutes);
+app.use("/api/resultados", resultadosRoutes);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
