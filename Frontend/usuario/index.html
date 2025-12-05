@@ -97,12 +97,10 @@
                 </div>
 
                 <div class="flex flex-col space-y-3">
-                    <a href="procesos-electorales-usuario.html" class="w-full">
-                        <button type="button" id="submit-verification-btn"
+                    <button type="submit" id="submit-verification-btn" 
                         class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 w-full">
-                            Acceder y Votar
-                        </button>
-                    </a>
+                        Acceder y Votar
+                    </button>
                     <div class="text-center mt-3 text-sm">
                         <button type="button" id="open-register-btn-from-login" class="text-teal-600 hover:text-teal-800 transition duration-300 ml-4">
                             Crear Cuenta
@@ -119,7 +117,7 @@
                 ¿No tienes cuenta? <span class="block font-bold">¡Crea una ahora!</span>
             </h2>
             <button id="close-register-modal" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
-            <form>
+            <form id="registration-form">
                 <div class="mb-4">
                     <label for="full-name" class="block text-gray-700 text-sm font-bold mb-2">Nombre Completo</label>
                     <input type="text" id="full-name" placeholder="Nombre Apellido"
@@ -127,7 +125,7 @@
                 </div>
                 <div class="mb-4">
                     <label for="dni" class="block text-gray-700 text-sm font-bold mb-2">DNI</label>
-                    <input type="dni" id="dni" placeholder="Ejm: 12345678"
+                    <input type="dni" id="dni-reg" placeholder="Ejm: 12345678"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
                 <div class="mb-4">
@@ -162,24 +160,24 @@
 
     <script>
 const API_URL = 'http://localhost:3000'; 
-const USER_TOKEN = localStorage.getItem('token');
+let USER_TOKEN = localStorage.getItem('token'); 
 
 const openLoginBtn = document.getElementById('open-modal-btn'); 
-const loginModal = document.getElementById('login-modal');
+const loginModal = document.getElementById('login-modal'); 
 const closeLoginBtn = document.getElementById('close-modal'); 
 const openRegisterBtn = document.getElementById('open-register-btn-from-login');
-const openLoginFromRegisterBtn = document.getElementById('open-login-btn-from-register');
 const registerModal = document.getElementById('register-modal');
 const closeRegisterBtn = document.getElementById('close-register-modal'); 
 
 const loginForm = document.getElementById('verification-form');
+const registerForm = document.getElementById('registration-form');
+
 const dniInput = document.getElementById('dni-modal');
 const passwordInput = document.getElementById('password-modal');
-const dniRegisterInput = document.getElementById('dni');
+const fullNameInput = document.getElementById('full-name');
+const dniRegisterInput = document.getElementById('dni-reg');
 const passwordRegisterInput = document.getElementById('reg-password');
 const confirmPasswordInput = document.getElementById('confirm-password');
-const fullNameInput = document.getElementById('full-name');
-const registerForm = document.getElementById('registration-form');
 
 function toggleModal(modal, show = true) {
     if (!modal) return;
@@ -187,19 +185,24 @@ function toggleModal(modal, show = true) {
     modal.classList.toggle('flex', show);
 }
 
+const openModalHandler = (e) => {
+    e.preventDefault(); 
+    toggleModal(loginModal, true);
+};
+
 function handleAuthButton() {
+    USER_TOKEN = localStorage.getItem('token'); 
+    const button = openLoginBtn; 
+    
+    button.removeEventListener('click', openModalHandler);
+
     if (USER_TOKEN) {
-        openLoginBtn.textContent = "Ir a Votar"; 
-        openLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'procesos-electorales.html';
-        });
+        button.textContent = "Ir a Votar"; 
+        button.href = 'procesos-electorales-usuario.html';
     } else {
-        openLoginBtn.textContent = "Acceder / Registrarse";
-        openLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            toggleModal(loginModal, true); 
-        });
+        button.textContent = "Acceder / Registrarse";
+        button.href = '#';
+        button.addEventListener('click', openModalHandler); 
     }
 }
 
@@ -207,38 +210,36 @@ if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => toggleModal(log
 if (loginModal) loginModal.addEventListener('click', (e) => { if (e.target === loginModal) toggleModal(loginModal, false); });
 
 if (openRegisterBtn) openRegisterBtn.addEventListener('click', () => { toggleModal(loginModal, false); toggleModal(registerModal, true); });
-if (openLoginFromRegisterBtn) openLoginFromRegisterBtn.addEventListener('click', () => { toggleModal(registerModal, false); toggleModal(loginModal, true); });
 
 if (closeRegisterBtn) closeRegisterBtn.addEventListener('click', () => toggleModal(registerModal, false));
 if (registerModal) registerModal.addEventListener('click', (e) => { if (e.target === registerModal) toggleModal(registerModal, false); });
 
+
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        if (!dniInput.value.trim() || !passwordInput.value.trim()) {
-            alert("DNI y contraseña son obligatorios.");
-            return;
-        }
-
+        const dni = dniInput.value.trim();
+        const password = passwordInput.value.trim();
+        if (!dni || !password) { alert("DNI y contraseña son obligatorios."); return; }
         try {
-            const res = await fetch(`${API_URL}/api/usuario/login`, {
+            const res = await fetch(`${API_URL}/api/usuarios/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dni: dniInput.value, password: passwordInput.value })
+                body: JSON.stringify({ dni, password })
             });
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.message || "Credenciales incorrectas o error en login.");
-                return;
-            }
-
-            localStorage.setItem('token', data.token);
-            
-            alert(`Login exitoso. Serás redirigido a los procesos electorales.`);
-            window.location.href = 'procesos-electorales.html';
-            
+            const data = await res.json(); 
+            if (res.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.usuario)); 
+                if (data.usuario.rol === 'votante') {
+                     window.location.href = 'procesos-electorales-usuario.html';
+                    } else if (data.usuario.rol === 'administrador') {
+                        window.location.href = 'dashboard-admin.html'; 
+                    }
+                } else {
+                    alert(data.message || 'Credenciales incorrectas');
+                }
+            window.location.href = 'procesos-electorales-usuario.html';
         } catch (err) {
             console.error("Error al conectar con el backend:", err);
             alert("Error de conexión al servidor.");
@@ -249,44 +250,37 @@ if (loginForm) {
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const nombre = fullNameInput.value.trim();
+        const dni = dniRegisterInput.value.trim();
+        const password = passwordRegisterInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
-        if (passwordRegisterInput.value !== confirmPasswordInput.value) {
-            alert("Las contraseñas no coinciden.");
-            return;
-        }
+        if (password !== confirmPassword) { alert("Las contraseñas no coinciden."); return; }
+        if (!nombre || !dni || !password) { alert("Todos los campos son obligatorios."); return; }
 
         try {
-            const res = await fetch(`${API_URL}/api/usuario/register`, {
+            const res = await fetch(`${API_URL}/api/usuarios/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: fullNameInput.value,
-                    dni: dniRegisterInput.value,
-                    password: passwordRegisterInput.value
-                })
+                body: JSON.stringify({ nombre, dni, password })
             });
-
             const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.message || "Error al registrar usuario. El DNI podría ya estar en uso.");
-                return;
-            }
-
-            alert("Registro exitoso. Ahora puede iniciar sesión.");
-            toggleModal(registerModal, false);
-            toggleModal(loginModal, true);
-
+            if (!res.ok) { alert(data.message || "Error al registrar usuario. El DNI podría ya estar en uso."); return; }
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({ id: data.usuario.id, rol: data.usuario.rol }));
+            alert("Registro exitoso. Serás redirigido.");
+            window.location.href = 'procesos-electorales-usuario.html';
         } catch (err) {
             console.error("Error al conectar con el backend:", err);
             alert("Error de conexión al servidor.");
         }
     });
 }
+
 window.onload = function() {
     handleAuthButton();
 };
-    </script>
+</script>
 
 </body>
 </html>
