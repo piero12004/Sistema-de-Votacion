@@ -2,7 +2,8 @@ import {Router} from "express";
 import { 
   obtenerPeriodosPorProceso,
   editarPeriodo,
-  eliminarPeriodo
+  eliminarPeriodo,
+  obtenerPeriodoPorId
 } from "../controllers/periodo.controller.js";
 
 const router = Router();
