@@ -7,4 +7,6 @@ const votoSchema = new mongoose.Schema({
   fecha: { type: Date, default: Date.now }
 });
 
+votoSchema.index({ usuario: 1, proceso: 1 }, { unique: true });
+
 export default mongoose.model("Voto", votoSchema);
