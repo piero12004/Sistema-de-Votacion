@@ -46,3 +46,17 @@ export const eliminarPeriodo = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
+export const obtenerPeriodoPorId = async (req, res) => {
+  try {
+    const periodo = await Periodo.findById(req.params.id);
+
+    if (!periodo) {
+      return res.status(404).json({ message: "Periodo no encontrado" });
+    }
+
+    res.json(periodo);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};

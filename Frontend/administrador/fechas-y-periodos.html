@@ -31,83 +31,89 @@
             }
         }
 
-        const periodos = [
-            { etapa: 'Inscripción de candidatos', inicio: '01/03/2025', fin: '10/03/2025', estado: 'En proceso' },
-            { etapa: 'Campaña electoral', inicio: '16/03/2025', fin: '30/03/2025', estado: 'Finalizado' },
-            { etapa: 'Jornada de votación', inicio: '01/04/2025', fin: '01/04/2025', estado: 'Pendiente' },
-            { etapa: 'Cómputo de resultados', inicio: '02/04/2025', fin: '03/04/2025', estado: 'Pendiente' },
-        ];
+        const API_PROCESOS = "https://sistema-de-votacion-gjzq.onrender.com/api/proceso";
+        const API_PERIODOS = "https://sistema-de-votacion-gjzq.onrender.com/api/periodo";
 
-        function getStatusColor(estado) {
-            switch (estado) {
-                case 'En proceso':
-                    return 'bg-estado-proceso text-white';
-                case 'Finalizado':
-                    return 'bg-estado-finalizado text-white';
-                case 'Pendiente':
-                    return 'bg-estado-pendiente text-custom-dark-button';
-                default:
-                    return 'bg-gray-300 text-gray-800';
+        async function cargarProcesos() {
+            try {
+                const res = await fetch(API_PROCESOS);
+                const procesos = await res.json();
+                renderProcesos(procesos);
+            } catch (err) {
+                console.error("Error al cargar procesos:", err);
             }
         }
 
-        function renderPeriodosTable() {
-            const tbody = document.getElementById('periodos-table-body');
-            if (!tbody) return;
-
-            let html = '';
-            periodos.forEach(periodo => {
-                const statusClass = getStatusColor(periodo.estado);
-                
-                html += `
-                    <tr class="border-b hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-3 font-medium text-gray-900">${periodo.etapa}</td>
-                        <td class="px-6 py-3 text-gray-700 font-mono">${periodo.inicio}</td>
-                        <td class="px-6 py-3 text-gray-700 font-mono">${periodo.fin}</td>
-                        <td class="px-6 py-3">
-                            <span class="inline-flex items-center px-3 py-1 text-xs font-bold leading-none rounded-full ${statusClass}">
-                                ${periodo.estado}
-                            </span>
-                        </td>
-                        <td class="px-6 py-3 space-x-3 whitespace-nowrap">
-                            <!-- Botón Eliminar -->
-                            <button onclick="handleAction('${periodo.etapa}', 'eliminar')" title="Eliminar" class="text-delete-icon hover:text-red-700 transition duration-150 focus:outline-none">
-                                <i class="fas fa-times-circle text-xl"></i>
-                            </button>
-                            <!-- Botón Editar -->
-                            <button onclick="handleAction('${periodo.etapa}', 'editar')" title="Editar" class="text-edit-icon hover:text-blue-700 transition duration-150 focus:outline-none">
-                                <i class="fas fa-pencil-alt text-lg"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tbody.innerHTML = html;
+        function formatearFecha(fechaISO) {
+            const fecha = new Date(fechaISO);
+            return fecha.toLocaleDateString("es-PE"); // d/m/aaaa
         }
 
-        function handleAction(etapa, action) {
-            const message = action === 'editar' 
-                ? `La función de Editar para la etapa "${etapa}" está pendiente de implementación.`
-                : `La función de Eliminar para la etapa "${etapa}" está pendiente de implementación.`;
-            
-            showCustomMessage(message); 
+        async function renderProcesos(procesos) {
+            const cont = document.getElementById("procesos-container");
+            cont.innerHTML = "";
+
+            for (const proceso of procesos) {
+                const res = await fetch(`${API_PERIODOS}/proceso/${proceso._id}`);
+                const periodos = await res.json();
+
+                let periodosHTML = periodos.length
+                    ? periodos.map(p => `
+                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border">
+                            <div>
+                                <p class="font-semibold text-gray-800">${p.nombre}</p>
+                                <p class="text-sm text-gray-600">
+                                    ${formatearFecha(p.fechaInicio)} → ${formatearFecha(p.fechaFin)}
+                                </p>
+                            </div>
+
+                            <div class="space-x-3">
+                                <button class="text-blue-600" onclick="editarPeriodo('${p._id}')"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="text-red-600" onclick="eliminarPeriodo('${p._id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join("")
+                    : `<p class="text-gray-500">No hay periodos registrados.</p>`;
+
+                cont.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-lg border">
+                        <h3 class="text-xl font-bold text-custom-dark-button">${proceso.nombre}</h3>
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-calendar-day"></i>
+                            ${formatearFecha(proceso.fechaInicio)} - ${formatearFecha(proceso.fechaFin)}
+                        </p>
+
+                        <h4 class="font-semibold text-gray-800 mb-2">Periodos:</h4>
+
+                        <div class="space-y-3">
+                            ${periodosHTML}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+
+        function editarPeriodo(id) {
+            showCustomMessage("Editar → " + id);
+        }
+
+        function eliminarPeriodo(id) {
+            showCustomMessage("Eliminar → " + id);
         }
 
         function showCustomMessage(message) {
             const modal = document.getElementById('custom-message-modal');
             const content = document.getElementById('custom-message-content');
-            if (modal && content) {
-                content.textContent = message;
-                modal.classList.remove('hidden');
-            }
+            content.textContent = message;
+            modal.classList.remove('hidden');
         }
 
         function hideCustomMessage() {
             document.getElementById('custom-message-modal').classList.add('hidden');
         }
 
-        document.addEventListener('DOMContentLoaded', renderPeriodosTable);
+        document.addEventListener("DOMContentLoaded", cargarProcesos);
     </script>
 </head>
 <body class="bg-main-bg font-sans">
@@ -161,41 +167,17 @@
         
         <!-- Contenido Principal -->
         <main class="flex-1 p-8 md:p-12 ml-sidebar-width">
-            
+
             <h1 class="text-4xl font-serif text-main-title mb-10 border-b pb-4 text-center md:text-left">
                 Fechas y Periodos
             </h1>
-            
-            <!-- Tabla de gestion -->
+
             <h2 class="text-2xl font-semibold text-custom-dark-button mb-6">
                 Gestión de fechas y periodos electorales
             </h2>
-            
-            <div class="bg-white rounded-xl shadow-lg overflow-x-auto mb-12">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Etapa
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Inicio
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Fin
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Estado
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="periodos-table-body" class="bg-white divide-y divide-gray-200">
-                    </tbody>
-                </table>
-            </div>
+
+            <!-- Contenedor dinámico de procesos -->
+            <div id="procesos-container" class="space-y-6"></div>
 
         </main>
         
@@ -212,7 +194,130 @@
             </div>
         </div>
 
+        <!-- Modal Editar Periodo -->
+        <div id="modal-editar" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+            <div class="bg-white p-6 rounded-xl w-96 shadow-xl">
+                <h2 class="text-xl font-bold mb-4">Editar Periodo</h2>
+
+                <form id="form-editar">
+                    <input type="hidden" id="editar-id">
+
+                    <label class="block mb-2 font-semibold">Nombre:</label>
+                    <input id="editar-nombre" class="w-full p-2 mb-3 border rounded">
+
+                    <label class="block mb-2 font-semibold">Fecha Inicio:</label>
+                    <input type="date" id="editar-inicio" class="w-full p-2 mb-3 border rounded">
+
+                    <label class="block mb-2 font-semibold">Fecha Fin:</label>
+                    <input type="date" id="editar-fin" class="w-full p-2 mb-4 border rounded">
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Confirmar Eliminación -->
+        <div id="modal-eliminar" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+            <div class="bg-white p-6 rounded-xl w-80 shadow-xl text-center">
+                <p class="text-lg font-semibold mb-4">¿Eliminar este periodo?</p>
+
+                <div class="flex justify-center gap-4">
+                    <button onclick="cerrarModalEliminar()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
+                    <button onclick="confirmarEliminar()" class="px-4 py-2 bg-red-600 text-white rounded">Eliminar</button>
+                </div>
+            </div>
+        </div>
+        
     </div>
+    <script>
+        let periodoAEliminar = null;
+
+        // ============================
+        // EDITAR PERIODO
+        // ============================
+        async function editarPeriodo(id) {
+            try {
+                const res = await fetch(`${API_PERIODOS}/${id}`);
+                const periodo = await res.json();
+
+                // Llenar modal
+                document.getElementById("editar-id").value = periodo._id;
+                document.getElementById("editar-nombre").value = periodo.nombre;
+                document.getElementById("editar-inicio").value = periodo.fechaInicio.split("T")[0];
+                document.getElementById("editar-fin").value = periodo.fechaFin.split("T")[0];
+
+                // Mostrar modal
+                document.getElementById("modal-editar").classList.remove("hidden");
+            } catch (error) {
+                console.error("Error cargando periodo:", error);
+                alert("No se pudo cargar el periodo.");
+            }
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById("modal-editar").classList.add("hidden");
+        }
+
+        // ============================
+        // GUARDAR CAMBIOS (PUT)
+        // ============================
+        document.getElementById("form-editar").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById("editar-id").value;
+
+            const datos = {
+                nombre: document.getElementById("editar-nombre").value,
+                fechaInicio: document.getElementById("editar-inicio").value,
+                fechaFin: document.getElementById("editar-fin").value,
+            };
+
+            try {
+                await fetch(`${API_PERIODOS}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datos)
+                });
+
+                cerrarModalEditar();
+                cargarProcesos(); // volver a cargar la lista
+            } catch (error) {
+                console.error("Error actualizando periodo:", error);
+                alert("Error al actualizar el periodo.");
+            }
+        });
+
+        // ============================
+        // ELIMINAR PERIODO
+        // ============================
+        function eliminarPeriodo(id) {
+            periodoAEliminar = id;
+            document.getElementById("modal-eliminar").classList.remove("hidden");
+        }
+
+        function cerrarModalEliminar() {
+            document.getElementById("modal-eliminar").classList.add("hidden");
+        }
+
+        async function confirmarEliminar() {
+            try {
+                await fetch(`${API_PERIODOS}/${periodoAEliminar}`, {
+                    method: "DELETE"
+                });
+
+                periodoAEliminar = null;
+
+                cerrarModalEliminar();
+                cargarProcesos(); // recargar periodos
+            } catch (error) {
+                console.error("Error eliminando periodo:", error);
+                alert("Error al eliminar el periodo.");
+            }
+        }
+    </script>
 
     <script type="module">
     import { cargarNombreAdmin } from "./js/admin.js";
