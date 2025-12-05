@@ -172,11 +172,19 @@ export const emitirVoto = async (req, res) => {
             return res.status(404).json({ message: "El candidato seleccionado no es válido para este proceso." });
         }
 
-        const updateCandidato = await Candidato.updateOne(
+        // Incrementar votos del candidato
+        await Candidato.updateOne(
             { _id: candidatoId },
             { $inc: { votos: 1 } }
         );
 
+        // Incrementar total de votos del proceso
+        await ProcesoElectoral.updateOne(
+            { _id: procesoId },
+            { $inc: { totalVotos: 1 } }
+        );
+
+        // Registrar el voto
         const nuevoVoto = await Voto.create({
            usuario: votanteId,
            proceso: procesoId,
