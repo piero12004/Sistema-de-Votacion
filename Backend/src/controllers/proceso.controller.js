@@ -1,5 +1,7 @@
 import ProcesoElectoral from "../models/ProcesoElectoral.js";
 import Voto from "../models/Voto.js";
+import Periodo from "../models/Periodo.js";
+import {generarPeriodosAutomaticos} from "../utils/generarPeriodos.js"
 
 const capitalizar = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -9,7 +11,10 @@ export const crearProceso = async (req, res) => {
     const nuevoProceso = new ProcesoElectoral(req.body);
     await nuevoProceso.save();
 
-    res.json({ message: "Proceso electoral creado con éxito", data: nuevoProceso });
+    const periodos = generarPeriodosAutomaticos(nuevoProceso);
+    await Periodo.insertMany(periodos);
+
+    res.json({ message: "Proceso electoral creado con éxito", data: nuevoProceso, periodosGenerados: periodos });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
