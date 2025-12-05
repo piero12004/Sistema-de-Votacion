@@ -117,7 +117,8 @@ export const getCandidatosPorProceso = async (req, res) => {
         const candidatos = await Candidato.find({ 
             proceso: idProceso,
             estado: "activo" 
-        }).select("nombre cargo _id");
+        }).select("nombre cargo _id foto");
+
 
         if (candidatos.length === 0) {
             return res.status(200).json({ proceso: proceso.nombre, candidatos: [], message: `No hay candidatos activos para el proceso ${proceso.nombre}` });
