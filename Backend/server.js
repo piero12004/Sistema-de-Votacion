@@ -26,7 +26,7 @@ import procesoRoutes from "./src/routes/proceso.routes.js";
 import candidatoRoutes from "./src/routes/candidato.routes.js";
 import votoRoutes from "./src/routes/voto.routes.js";
 import periodoRoutes from "./src/routes/periodo.routes.js";
-import resultadosRoutes from "./routes/resultados.routes.js";
+import resultadosRoutes from "./routes/resultado.routes.js";
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/usuario", usuarioRoutes);
