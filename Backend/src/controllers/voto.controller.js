@@ -1,5 +1,6 @@
 import Voto from "../models/Voto.js";
 import ProcesoElectoral from "../models/ProcesoElectoral.js";
+import Candidato from "../models/Candidato.js";
 
 // Registrar un voto
 export const crearVoto = async (req, res) => {
@@ -13,15 +14,21 @@ export const crearVoto = async (req, res) => {
       return res.status(403).json({ error: "Ya votaste en este proceso." });
     }
 
-
     // Validar si el proceso sigue activo
     const proc = await ProcesoElectoral.findById(proceso);
-    if (!proc || proc.estado !== "activo") {
+    if (!proc || proc.estado !== "Activo") { // fijarse que estado en DB es "Activo"
       return res.status(400).json({ error: "El proceso electoral no está activo." });
     }
 
+    // Crear voto
     const nuevoVoto = new Voto({ usuario, proceso, candidato });
     await nuevoVoto.save();
+
+    // Incrementar votos del candidato
+    await Candidato.findByIdAndUpdate(candidato, { $inc: { votos: 1 } });
+
+    // Incrementar total de votos del proceso
+    await ProcesoElectoral.findByIdAndUpdate(proceso, { $inc: { totalVotos: 1 } });
 
     res.json({ message: "Voto registrado exitosamente", data: nuevoVoto });
 

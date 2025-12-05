@@ -8,7 +8,8 @@ const candidatoSchema = new mongoose.Schema({
   foto: { type: String },
   proceso: { type: mongoose.Schema.Types.ObjectId, ref: "ProcesoElectoral", required: function() {
     return this.estado === "activo";
-  }}
+  }},
+  votos: { type: Number, default: 0 }
 });
 
 export default mongoose.model("Candidato", candidatoSchema);

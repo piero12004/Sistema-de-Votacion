@@ -124,7 +124,19 @@ export const getCandidatosPorProceso = async (req, res) => {
             return res.status(200).json({ proceso: proceso.nombre, candidatos: [], message: `No hay candidatos activos para el proceso ${proceso.nombre}` });
         }
         
-        return res.status(200).json({ proceso: proceso.nombre, candidatos });
+        // Verificar si el usuario ya votó en este proceso
+        let votoExistente = false;
+        if (req.user && req.user.id) {
+            const voto = await Voto.findOne({ usuario: req.user.id, proceso: idProceso });
+            votoExistente = !!voto;
+        }
+
+        return res.status(200).json({ 
+            proceso: proceso.nombre, 
+            candidatos, 
+            votoExistente 
+        });
+
 
     } catch (error) {
         console.error("❌ Error al obtener candidatos por proceso:", error);

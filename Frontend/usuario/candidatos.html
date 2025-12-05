@@ -62,7 +62,7 @@
                 ¿Estás seguro que quieres votar por este candidato?
             </p>
 
-            <div class="w-28 h-28 bg-gray-300 rounded-full flex items-center justify-center mb-4 mx-auto border-4 border-gray-400">
+            <div id="modal-candidate-photo" class="w-28 h-28 bg-gray-300 rounded-full flex items-center justify-center mb-4 mx-auto border-4 border-gray-400">
                 <i class="fas fa-user text-5xl text-gray-500"></i>
             </div>
             
@@ -119,6 +119,7 @@
         const successCandidateName = document.getElementById('modal-success-candidate-name');
         const votedTimestamp = document.getElementById('voted-timestamp');
         const closeSuccessModalBtn = document.getElementById('close-success-modal-btn');
+        const modalCandidatePhoto = document.getElementById('modal-candidate-photo');
 
         let currentCandidateName = ''; 
         let currentCandidateId = ''; 
@@ -166,6 +167,7 @@
             boton.type = 'button';
             boton.dataset.candidatoId = candidato._id;
             boton.dataset.candidatoNombre = candidato.nombre;
+            boton.dataset.candidatoFoto = candidato.foto || '';
             boton.className = 'boton-votar bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-8 rounded shadow-md focus:outline-none focus:shadow-outline transition duration-300 w-full max-w-[150px]';
             boton.textContent = 'Votar';
             cardDiv.appendChild(boton);
@@ -176,60 +178,84 @@
 
 
         async function loadCandidatos() {
-        const token = localStorage.getItem('token');
-        
-        if (!procesoId || !token) { 
-            alert("Debe iniciar sesión y seleccionar un proceso para ver los candidatos.");
-            window.location.href = 'index.html';
-            return;
-        }
-
-        try {
-            const res = await fetch(`${API_URL}/api/usuario/${procesoId}/candidatos`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                }
-            });
+            const token = localStorage.getItem('token');
             
-            if (res.status === 401 || res.status === 403) {
-                alert("Su sesión ha expirado o no está autorizado. Por favor, inicie sesión de nuevo.");
-                localStorage.clear();
+            if (!procesoId || !token) { 
+                alert("Debe iniciar sesión y seleccionar un proceso para ver los candidatos.");
                 window.location.href = 'index.html';
                 return;
             }
 
-            const data = await res.json();
-
-            if (!res.ok || data.candidatos === undefined) {
-                procesoNombreSpan.textContent = "Error: Proceso inactivo o no existe.";
-                candidatosContainer.innerHTML = `<p class="text-xl text-red-500 mt-8 col-span-full">${data.message || 'No se pudieron cargar los candidatos.'}</p>`;
-                return;
-            }
-            
-            procesoNombreSpan.textContent = data.proceso; 
-            
-            if (data.candidatos.length > 0) {
-                candidatosContainer.innerHTML = ''; 
-                data.candidatos.forEach(candidato => {
-                    candidatosContainer.appendChild(createCandidatoCard(candidato));
+            try {
+                const res = await fetch(`${API_URL}/api/usuario/${procesoId}/candidatos`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }
                 });
-                attachVoteListeners(); 
+                
+                if (res.status === 401 || res.status === 403) {
+                    alert("Su sesión ha expirado o no está autorizado. Por favor, inicie sesión de nuevo.");
+                    localStorage.clear();
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (!res.ok || data.candidatos === undefined) {
+                    procesoNombreSpan.textContent = "Error: Proceso inactivo o no existe.";
+                    candidatosContainer.innerHTML = `<p class="text-xl text-red-500 mt-8 col-span-full">${data.message || 'No se pudieron cargar los candidatos.'}</p>`;
+                    return;
+                }
+                
+                procesoNombreSpan.textContent = data.proceso; 
+                
+                if (data.candidatos.length > 0) {
+                    candidatosContainer.innerHTML = ''; 
+                    data.candidatos.forEach(candidato => {
+                        candidatosContainer.appendChild(createCandidatoCard(candidato));
+                    });
+                    attachVoteListeners(); 
+                } else {
+                    candidatosContainer.innerHTML = '<p class="text-xl text-gray-500 mt-8 col-span-full">No hay candidatos activos en este proceso.</p>';
+                }
+
+                // Bloquear botones si el usuario ya votó en este proceso
+                if (data.votoExistente) {
+                    document.querySelectorAll('.boton-votar').forEach(btn => {
+                        btn.textContent = 'Voto Emitido';
+                        btn.disabled = true;
+                        btn.classList.remove('bg-teal-600', 'hover:bg-teal-700');
+                        btn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                    });
+                }
+
+            } catch (err) {
+                console.error("Error al cargar candidatos:", err);
+                procesoNombreSpan.textContent = "Error de conexión al servidor.";
+            }
+        }
+        
+        function showConfirmationModal(candidato) {
+            currentCandidateName = candidato.nombre;
+            currentCandidateId = candidato._id;
+
+            confirmCandidateName.textContent = candidato.nombre;
+
+            // Mostrar foto si existe
+            if (candidato.foto) {
+                modalCandidatePhoto.innerHTML = ''; // limpiar contenido anterior
+                const img = document.createElement('img');
+                img.src = candidato.foto;
+                img.alt = candidato.nombre;
+                img.className = 'w-28 h-28 rounded-full object-cover border-2 border-gray-300';
+                modalCandidatePhoto.appendChild(img);
             } else {
-                candidatosContainer.innerHTML = '<p class="text-xl text-gray-500 mt-8 col-span-full">No hay candidatos activos en este proceso.</p>';
+                modalCandidatePhoto.innerHTML = '<i class="fas fa-user text-5xl text-gray-500"></i>';
             }
 
-        } catch (err) {
-            console.error("Error al cargar candidatos:", err);
-            procesoNombreSpan.textContent = "Error de conexión al servidor.";
-        }
-    }
-        
-        function showConfirmationModal(candidateName) {
-            currentCandidateName = candidateName; 
-            confirmCandidateName.textContent = candidateName; 
-            
             confirmationModal.classList.remove('hidden');
             confirmationModal.classList.add('flex');
         }
@@ -264,10 +290,12 @@
             
             voteButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    currentCandidateName = button.getAttribute('data-candidato-nombre');
-                    currentCandidateId = button.getAttribute('data-candidato-id'); 
-                    
-                    showConfirmationModal(currentCandidateName);
+                const candidato = {
+                    _id: button.dataset.candidatoId,
+                    nombre: button.dataset.candidatoNombre,
+                    foto: button.dataset.candidatoFoto
+                };
+                    showConfirmationModal(candidato);
                 });
             });
         }
