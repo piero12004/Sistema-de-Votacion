@@ -202,8 +202,9 @@
             </div>
 
             <div class="mt-8">
-                <a href="login.html" class="w-full py-3 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-150 shadow-md flex justify-center">
-                    Cerrar Sesion
+                <a href="#" id="btnCerrarSesion"
+                    class="w-full py-3 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-150 shadow-md flex justify-center">
+                        Cerrar Sesión
                 </a>
             </div>
         </div>
@@ -269,8 +270,16 @@
     </div>
 
     <script type="module">
-        import { cargarNombreAdmin } from "./js/admin.js";
+        import { cargarNombreAdmin, protegerPagina, cerrarSesion } from "./js/admin.js";
+
+        // Protege la página al cargar
+        protegerPagina();
+
+        // Muestra el nombre del admin
         cargarNombreAdmin();
+
+        // Si tienes un botón de cerrar sesión
+        document.getElementById("btnCerrarSesion")?.addEventListener("click", cerrarSesion);
     </script>
 </body>
 </html>
